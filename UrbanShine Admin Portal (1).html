@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UrbanShine Admin Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14231F;--paper:#F7F5F0;--panel:#fff;--line:#E4E0D6;--jade:#2F6F5E;--jade-dk:#234F42;--amber:#C98A3E;--muted:#63706A;--danger:#B4523F;--r:10px;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#EFEAE2;--paper:#12201B;--panel:#1B2925;--line:#2E3D37;--muted:#9AA79F}}
+:root[data-theme="dark"]{--ink:#EFEAE2;--paper:#12201B;--panel:#1B2925;--line:#2E3D37;--muted:#9AA79F}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Fraunces,serif;font-weight:500;margin:0}
+button{font-family:inherit;cursor:pointer}
+.app{display:flex;min-height:100vh}
+.side{width:240px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.side .brand{padding:20px 18px 14px}
+.side .brand b{font-family:Fraunces,serif;font-size:1.15rem}
+.side .brand span{display:block;color:var(--muted);font-size:.72rem}
+.navgrp{padding:10px 10px 4px}
+.navgrp .lbl{font-size:.66rem;letter-spacing:.06em;color:var(--muted);padding:8px 10px 4px;text-transform:uppercase}
+.navitem{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;font-size:.87rem;color:var(--ink);cursor:pointer;margin-bottom:1px;background:none;border:none;width:100%;text-align:left}
+.navitem:hover{background:var(--paper)}
+.navitem.on{background:var(--jade);color:#fff}
+.badge{background:var(--amber);color:#fff;font-size:.68rem;padding:1px 6px;border-radius:10px;font-weight:700}
+.navitem.on .badge{background:#fff;color:var(--jade-dk)}
+.side .foot{margin-top:auto;padding:14px 18px;border-top:1px solid var(--line);font-size:.82rem}
+.side .foot b{display:block}
+.side .foot span{color:var(--muted);font-size:.76rem}
+.side .foot a{color:var(--danger);font-size:.78rem;text-decoration:none;display:inline-block;margin-top:6px}
+.main{flex:1;min-width:0}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+.hdr h1{font-size:1.3rem}.hdr p{color:var(--muted);font-size:.85rem;margin-top:2px}
+.hdr-r{display:flex;align-items:center;gap:16px}
+.hdr-r input{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);width:220px;font-size:.85rem;color:var(--ink)}
+.bell{position:relative;font-size:1.1rem;cursor:pointer}
+.bell .dot{position:absolute;top:-4px;right:-6px;background:var(--danger);color:#fff;font-size:.62rem;padding:1px 5px;border-radius:8px;font-weight:700}
+.content{padding:26px 28px 60px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;cursor:pointer;transition:border-color .15s}
+.kpi:hover{border-color:var(--jade)}
+.kpi .n{font-size:1.5rem;font-weight:700}
+.kpi .l{color:var(--muted);font-size:.8rem;margin-top:2px}
+.grid2c{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+@media(max-width:980px){.grid2c{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:18px}
+.card h3{font-size:1rem;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.card h3 .sm{font-size:.8rem;color:var(--jade);font-weight:600;cursor:pointer}
+.attn{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+.attn:last-child{border-bottom:none}
+.attn .t{font-size:.88rem;font-weight:600}.attn .s{font-size:.78rem;color:var(--muted)}
+.btn{padding:8px 14px;border-radius:8px;font-weight:600;font-size:.82rem;border:1px solid var(--line);background:var(--panel);color:var(--ink);white-space:nowrap}
+.btn.primary{background:var(--jade);color:#fff;border-color:var(--jade)}
+.btn.primary:hover{background:var(--jade-dk)}
+.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line)}
+tr.row:hover td{background:var(--paper);cursor:pointer}
+.pill{font-size:.72rem;padding:3px 9px;border-radius:20px;font-weight:600;display:inline-block}
+.p-pend{background:#F4E3CB;color:#8A5A1E}.p-conf{background:#DCEAE5;color:var(--jade-dk)}.p-prog{background:#DCE7F5;color:#2D5C99}.p-done{background:#E2EFE0;color:#2E6B2E}.p-cancel{background:#F3DEDA;color:var(--danger)}.p-fail{background:#F3DEDA;color:var(--danger)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font-size:.82rem}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.overlay{position:fixed;inset:0;background:rgba(20,35,31,.4);z-index:50;display:flex;justify-content:flex-end}
+.overlay.center{align-items:center;justify-content:center}
+.drawer{width:440px;max-width:92vw;background:var(--panel);height:100%;overflow-y:auto;padding:24px}
+.modal{width:440px;max-width:92vw;background:var(--panel);border-radius:var(--r);padding:24px}
+.drawer h2,.modal h2{font-size:1.15rem;margin-bottom:4px}
+.xclose{float:right;background:none;border:none;font-size:1.2rem;color:var(--muted)}
+.field{display:block;margin:12px 0}
+.field span{display:block;font-size:.8rem;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:.88rem}
+.sumline{display:flex;justify-content:space-between;font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.cleaneropt{display:flex;justify-content:space-between;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px}
+.cleaneropt .nm{font-weight:600;font-size:.88rem}.cleaneropt .meta{font-size:.75rem;color:var(--muted)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:8px;font-size:.85rem;z-index:100;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty h3{color:var(--ink);margin-bottom:6px}
+.stub{padding:60px 30px;text-align:center;color:var(--muted);max-width:480px;margin:0 auto}
+.stub h2{color:var(--ink);margin-bottom:10px}
+.tag2{font-size:.7rem;color:var(--jade);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.section-tabs{display:flex;gap:6px;margin:16px 0;flex-wrap:wrap}
+.section-tabs button{padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:var(--panel);font-size:.78rem;color:var(--muted)}
+.section-tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.warnbox{background:#F3DEDA;color:var(--danger);border-radius:8px;padding:10px 12px;font-size:.82rem;margin:10px 0}
+@media(max-width:760px){.side{position:fixed;left:-260px;transition:left .2s;z-index:60}.side.open{left:0}.hdr-r input{width:130px}}
+
+.kanban{display:flex;gap:10px;overflow-x:auto}
+.kcol{min-width:220px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;flex-shrink:0}
+.kcard{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:8px;font-size:.8rem;cursor:pointer}
+.searchdd{position:absolute;top:64px;right:28px;width:320px;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:80;max-height:360px;overflow:auto}
+.searchdd .grp{padding:6px 12px;font-size:.7rem;color:var(--muted);text-transform:uppercase}
+.searchdd .item{padding:8px 12px;font-size:.85rem;cursor:pointer}
+.searchdd .item:hover{background:var(--paper)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-cell{border:1px solid var(--line);border-radius:8px;padding:8px;min-height:64px;font-size:.78rem;cursor:pointer}
+.cal-cell:hover{background:var(--paper)}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" id="side">
+    <div class="brand"><b>UrbanShine</b><span>Admin Portal</span></div>
+    <div id="navHost"></div>
+    <div class="foot"><b>Shekemi</b><span>Super Admin</span><a href="#">Log Out</a></div>
+  </nav>
+  <div class="main">
+    <div class="hdr">
+      <div><h1 id="pgTitle">Dashboard</h1><p id="pgDesc">Here's what's happening with UrbanShine today.</p></div>
+      <div class="hdr-r">
+        <input placeholder="Search bookings, customers, cleaners…" oninput="globalSearch(this.value)">
+        <div class="bell" onclick="toast('5 unread notifications')">🔔<span class="dot">5</span></div>
+        <div style="font-size:.85rem;font-weight:600">Shekemi</div>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+<div id="modalHost"></div>
+<div class="toast" id="toast"></div>
+<script>
+const money=n=>"₦"+n.toLocaleString();
+const NAV=[
+ {g:"MAIN",items:[["dashboard","Dashboard"],["bookings","Bookings",()=>BOOKINGS.filter(b=>b.status==='Pending Assignment').length],["calendar","Calendar"]]},
+ {g:"OPERATIONS",items:[["customers","Customers"],["cleaners","Cleaners"],["availability","Availability"],["zones","Zones & Areas"]]},
+ {g:"BUSINESS",items:[["pricing","Services & Pricing"],["payments","Payments & Revenue"],["reviews","Reviews"]]},
+ {g:"COMMUNICATION",items:[["notifications","Notifications",()=>5]]},
+ {g:"INSIGHTS",items:[["reports","Reports"]]},
+ {g:"SYSTEM",items:[["settings","Settings"]]},
+];
+const TITLES={dashboard:["Dashboard","Here's what's happening with UrbanShine today."],bookings:["Bookings","Manage all UrbanShine bookings."],calendar:["Calendar","Schedule overview across all cleaners."],customers:["Customers","Every customer who has booked UrbanShine."],cleaners:["Cleaners","Manage UrbanShine's cleaner workforce."],availability:["Cleaner Availability","See who's free, working, or blocked."],zones:["Zones & Areas","Logistics zones and coverage areas."],pricing:["Services & Pricing","Base prices, extras, add-ons and supplies."],payments:["Payments & Revenue","Transactions, revenue and cleaner payouts."],reviews:["Reviews","Customer feedback on completed cleanings."],notifications:["Notifications","System, customer and cleaner notifications."],reports:["Reports & Analytics","Trends and drill-downs across the business."],settings:["Settings","Business, booking, payment and payout configuration."]};
+
+const CLEANERS=[
+ {id:'c1',name:'Blessing Okafor',zone:'Zone 1',status:'Available',jobs:2,rating:4.8,earnings:64000,pending:9100},
+ {id:'c2',name:'Tunde Adebayo',zone:'Zone 2',status:'Working',jobs:5,rating:4.6,earnings:112000,pending:0},
+ {id:'c3',name:'Grace Eze',zone:'Zone 1',status:'Available',jobs:1,rating:4.9,earnings:41000,pending:0},
+ {id:'c4',name:'Musa Ibrahim',zone:'Zone 3',status:'Off Today',jobs:0,rating:4.5,earnings:22000,pending:0},
+ {id:'c5',name:'Amaka Nwosu',zone:'Zone 2',status:'Inactive',jobs:0,rating:4.2,earnings:8000,pending:0},
+];
+const CUSTOMERS=[
+ {id:'u1',name:'Folake Ade',phone:'0803 000 1122',email:'folake@example.com',bookings:6,completed:5,cancelled:1,spent:98000},
+ {id:'u2',name:'Chidi Obi',phone:'0810 555 7890',email:'chidi@example.com',bookings:2,completed:2,cancelled:0,spent:30000},
+ {id:'u3',name:'Ngozi Umeh',phone:'0902 333 4455',email:'ngozi@example.com',bookings:4,completed:3,cancelled:1,spent:65000},
+];
+let BOOKINGS=[
+ {id:'US-1048',customer:'Folake Ade',service:'Standard Cleaning',date:'Sep 25, 2026',time:'10:00 AM',area:'Bodija',zone:'Zone 1 — ₦3,000',cleaner:null,status:'Pending Assignment',amount:15500,payment:'Paid'},
+ {id:'US-1049',customer:'Chidi Obi',service:'Deep Cleaning',date:'Sep 25, 2026',time:'12:00 PM',area:'Jericho',zone:'Zone 2 — ₦3,500',cleaner:null,status:'Pending Assignment',amount:22000,payment:'Paid',declined:{by:'Blessing Okafor',reason:'Schedule conflict'}},
+ {id:'US-1050',customer:'Ngozi Umeh',service:'Move-In / Move-Out',date:'Sep 25, 2026',time:'2:00 PM',area:'Akobo',zone:'Zone 3 — ₦4,500',cleaner:null,status:'Payment Failed',amount:29500,payment:'Failed'},
+ {id:'US-1047',customer:'Folake Ade',service:'Standard Cleaning',date:'Sep 24, 2026',time:'9:00 AM',area:'Mokola',zone:'Zone 1 — ₦3,000',cleaner:'Grace Eze',status:'Cleaning Started',amount:16000,payment:'Paid',issue:{note:'Customer not opening gate, cleaner waiting outside.',time:'9:15 AM'}},
+ {id:'US-1046',customer:'Chidi Obi',service:'Standard Cleaning',date:'Sep 24, 2026',time:'1:00 PM',area:'Ring Road',zone:'Zone 2 — ₦3,500',cleaner:'Blessing Okafor',status:'Completed',amount:14500,payment:'Paid'},
+ {id:'US-1045',customer:'Ngozi Umeh',service:'Deep Cleaning',date:'Sep 23, 2026',time:'11:00 AM',area:'Iwo Road',zone:'Zone 2 — ₦3,500',cleaner:'Grace Eze',status:'Cancelled',amount:20500,payment:'Refunded'},
+];
+const AVAIL_CLEANERS=()=>CLEANERS.filter(c=>c.status==='Available'||c.status==='Working');
+
+let route='dashboard', bFilter={status:'',zone:'',service:''};
+
+function buildNav(){
+  document.getElementById('navHost').innerHTML=NAV.map(g=>`<div class="navgrp"><div class="lbl">${g.g}</div>${g.items.map(it=>{
+    const badge=it[2]?it[2]():0;
+    return `<button class="navitem ${route===it[0]?'on':''}" onclick="go('${it[0]}')"><span>${it[1]}</span>${badge?`<span class="badge">${badge}</span>`:''}</button>`;
+  }).join('')}</div>`).join('');
+}
+function go(r,filter){ route=r; if(filter){bFilter={status:'',zone:'',service:'',...filter};} else if(r==='bookings'){} document.getElementById('side').classList.remove('open'); render(); window.scrollTo(0,0); }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+function globalSearch(v){ if(v.length>1) toast(`Searching “${v}”…`); }
+function closeModal(){ document.getElementById('modalHost').innerHTML=''; }
+
+function statusPill(s){
+  const map={'Pending Assignment':'p-pend','Confirmed':'p-conf','Cleaner En Route':'p-conf','Cleaning Started':'p-prog','Completed':'p-done','Cancelled':'p-cancel','Payment Failed':'p-fail'};
+  return `<span class="pill ${map[s]||'p-pend'}">${s}</span>`;
+}
+
+/* ---------- DASHBOARD ---------- */
+function pageDashboard(){
+  const today=BOOKINGS.filter(b=>b.date==='Sep 25, 2026');
+  const pending=BOOKINGS.filter(b=>b.status==='Pending Assignment');
+  const avail=CLEANERS.filter(c=>c.status==='Available').length;
+  const inProgress=BOOKINGS.filter(b=>b.status==='Cleaning Started').length;
+  const revenueToday=today.filter(b=>b.payment==='Paid').reduce((s,b)=>s+b.amount,0);
+  const kpis=[
+    ['Today\'s Bookings',today.length,()=>go('bookings',{date:'today'})],
+    ['Pending Assignment',pending.length,()=>go('bookings',{status:'Pending Assignment'})],
+    ['Cleaners Available',avail,()=>go('availability')],
+    ['Today\'s Revenue',money(revenueToday),()=>go('payments')],
+    ['Cleaning in Progress',inProgress,()=>go('bookings',{status:'Cleaning Started'})],
+  ];
+  window.KPIS=kpis.map(k=>k[2]);
+  const attn=[];
+  pending.forEach(b=>attn.push({t:`Booking needs cleaner assignment`,s:`${b.id} · ${b.service} · ${b.time}`,btn:'Assign Cleaner',act:()=>openAssign(b.id)}));
+  const declined=BOOKINGS.find(b=>b.declined);
+  if(declined) attn.push({t:'Cleaner declined booking',s:`${declined.id} · declined by ${declined.declined.by}`,btn:'Find Replacement',act:()=>openAssign(declined.id)});
+  const failed=BOOKINGS.find(b=>b.status==='Payment Failed');
+  if(failed) attn.push({t:'Payment failed',s:`${failed.id} · ${money(failed.amount)}`,btn:'View Booking',act:()=>openBooking(failed.id)});
+  const issue=BOOKINGS.find(b=>b.issue);
+  if(issue) attn.push({t:'Cleaner reported an issue',s:`${issue.id} · ${issue.cleaner}`,btn:'Review Issue',act:()=>openBooking(issue.id,true)});
+
+  window.ATTN=attn.map(a=>a.act);
+  document.getElementById('content').innerHTML=`
+  <div class="kpis">${kpis.map((k,i)=>`<div class="kpi" onclick="KPIS[${i}]()"><div class="n">${k[1]}</div><div class="l">${k[0]}</div></div>`).join('')}</div>
+  <div class="grid2c"><div>
+    <div class="card"><h3>Needs Attention <span></span></h3>${attn.map((a,i)=>`<div class="attn"><div><div class="t">${a.t}</div><div class="s">${a.s}</div></div><button class="btn primary" onclick="attnAct(${i})">${a.btn}</button></div>`).join('')}</div>
+    <div class="card"><h3>Today's Schedule <span class="sm" onclick="go('calendar')">View Calendar</span></h3>
+      <table><tr><th>Time</th><th>Ref</th><th>Customer</th><th>Area</th><th>Cleaner</th><th>Status</th></tr>
+      ${today.map(b=>`<tr class="row" onclick="openBooking('${b.id}')"><td>${b.time}</td><td>${b.id}</td><td>${b.customer}</td><td>${b.area}</td><td>${b.cleaner||'—'}</td><td>${statusPill(b.status)}</td></tr>`).join('')}</table>
+    </div>
+    <div class="card"><h3>Recent Bookings <span class="sm" onclick="go('bookings')">View All</span></h3>
+      <table><tr><th>Ref</th><th>Customer</th><th>Service</th><th>Amount</th><th>Status</th></tr>
+      ${BOOKINGS.slice(0,5).map(b=>`<tr class="row" onclick="openBooking('${b.id}')"><td>${b.id}</td><td>${b.customer}</td><td>${b.service}</td><td>${money(b.amount)}</td><td>${statusPill(b.status)}</td></tr>`).join('')}</table>
+    </div>
+  </div>
+  <div>
+    <div class="card"><h3>Cleaner Overview <span class="sm" onclick="go('cleaners')">Manage Cleaners</span></h3>
+      ${['Available','Working','Off Today','Inactive'].map(s=>`<div class="attn" style="cursor:pointer" onclick="go('availability',{cstatus:'${s}'})"><div class="t">${s}</div><div class="t">${CLEANERS.filter(c=>c.status===s).length}</div></div>`).join('')}
+    </div>
+    <div class="card"><h3>Cleaner Payouts</h3>
+      <div class="attn"><div class="t">Pending Payouts</div><div class="t">${money(CLEANERS.reduce((s,c)=>s+c.pending,0))}</div></div>
+      <div class="attn"><div class="t">Paid This Month</div><div class="t">${money(420000)}</div></div>
+      <button class="btn primary" style="margin-top:10px;width:100%" onclick="go('payments',{tab:'payouts'})">View Payouts</button>
+    </div>
+    <div class="card"><h3>Recent Activity</h3>
+      <div class="attn"><div class="t" style="cursor:pointer" onclick="openBooking('US-1046')">Blessing accepted booking US-1046</div></div>
+      <div class="attn"><div class="t" style="cursor:pointer" onclick="openBooking('US-1049')">Payment received for US-1049</div></div>
+      <div class="attn"><div class="t" style="cursor:pointer" onclick="openBooking('US-1045')">Refund processed for US-1045</div></div>
+    </div>
+  </div></div>`;
+}
+function attnAct(i){ ATTN[i](); }
+// rebuild attn actions closures each render via storing on window
+const _origPD=pageDashboard;
+pageDashboard=function(){ _origPD(); };
+
+/* ---------- BOOKINGS ---------- */
+let bView='table';
+const BOARD_COLS=['Pending Assignment','Confirmed','Cleaning Started','Completed','Cancelled'];
+function pageBookings(){
+  const list=BOOKINGS.filter(b=> (!bFilter.status||b.status===bFilter.status) && (!bFilter.zone||b.zone===bFilter.zone) && (!bFilter.service||b.service===bFilter.service) && (!bFilter.date||b.date==='Sep 25, 2026') );
+  document.getElementById('content').innerHTML=`
+  <div class="toolbar"><div class="filters">
+    <div class="section-tabs" style="margin:0"><button class="${bView==='table'?'on':''}" onclick="bView='table';render()">Table</button><button class="${bView==='board'?'on':''}" onclick="bView='board';render()">Board</button></div>
+    <select onchange="bFilter.status=this.value;render()"><option value="">All Statuses</option>${['Pending Assignment','Confirmed','Cleaning Started','Completed','Cancelled','Payment Failed'].map(s=>`<option ${bFilter.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    <select onchange="bFilter.service=this.value;render()"><option value="">All Services</option>${['Standard Cleaning','Deep Cleaning','Move-In / Move-Out'].map(s=>`<option ${bFilter.service===s?'selected':''}>${s}</option>`).join('')}</select>
+    <button class="btn" onclick="bFilter={};render()">Clear Filters</button>
+  </div><button class="btn primary" onclick="openCreateBooking()">+ Create Booking</button></div>
+  ${bView==='table'?renderBookingsTable(list):renderBookingsBoard(list)}`;
+}
+function renderBookingsTable(list){
+  return `<div class="card">${list.length?`<table><tr><th>Ref</th><th>Customer</th><th>Service</th><th>Date</th><th>Area</th><th>Cleaner</th><th>Amount</th><th>Status</th><th></th></tr>
+  ${list.map(b=>`<tr class="row"><td onclick="openBooking('${b.id}')">${b.id}</td><td onclick="openBooking('${b.id}')">${b.customer}</td><td onclick="openBooking('${b.id}')">${b.service}</td><td onclick="openBooking('${b.id}')">${b.date}</td><td onclick="openBooking('${b.id}')">${b.area}</td><td onclick="openBooking('${b.id}')">${b.cleaner||'—'}</td><td onclick="openBooking('${b.id}')">${money(b.amount)}</td><td onclick="openBooking('${b.id}')">${statusPill(b.status)}</td><td><button class="btn" onclick="event.stopPropagation();openBooking('${b.id}')">View</button></td></tr>`).join('')}
+  </table>`:`<div class="empty"><h3>No bookings found</h3><p>Try adjusting your filters.</p></div>`}</div>`;
+}
+function renderBookingsBoard(list){
+  return `<div style="display:flex;gap:14px;overflow-x:auto;padding-bottom:10px">${BOARD_COLS.map(col=>{
+    const items=list.filter(b=>b.status===col);
+    return `<div style="min-width:230px;flex:1"><div style="font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px">${col} <span class="badge" style="background:var(--line);color:var(--ink)">${items.length}</span></div>
+    ${items.map(b=>`<div class="card" style="padding:12px;margin-bottom:10px;cursor:pointer" onclick="openBooking('${b.id}')"><div style="font-weight:700;font-size:.85rem">${b.id}</div><div style="font-size:.8rem;margin:3px 0">${b.customer}</div><div style="font-size:.76rem;color:var(--muted)">${b.service}</div><div style="font-size:.76rem;color:var(--muted)">${b.time} · ${b.area}</div><div style="font-size:.76rem;margin-top:4px">${b.cleaner||'Unassigned'}</div></div>`).join('')||'<p style="color:var(--muted);font-size:.78rem">Empty</p>'}
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function findB(id){ return BOOKINGS.find(b=>b.id===id); }
+
+function openBooking(id,expandIssue){
+  const b=findB(id);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <span class="tag2">${b.id}</span><h2>${b.service}</h2><p style="color:var(--muted);font-size:.85rem">${b.customer} · ${b.date} · ${b.time}</p>
+  ${statusPill(b.status)}
+  <div class="card" style="margin-top:16px"><h3>Customer</h3><div class="sumline"><span>Name</span><span>${b.customer}</span></div><div class="sumline"><span></span><button class="btn" onclick="toast('Opening customer profile…')">View Customer</button></div></div>
+  <div class="card"><h3>Location</h3><div class="sumline"><span>Area</span><span>${b.area}</span></div><div class="sumline"><span>Zone</span><span>${b.zone}</span></div></div>
+  <div class="card"><h3>Payment</h3><div class="sumline"><span>Amount</span><span>${money(b.amount)}</span></div><div class="sumline"><span>Status</span><span>${b.payment}</span></div></div>
+  <div class="card"><h3>Cleaner</h3><div class="sumline"><span>Assigned</span><span>${b.cleaner||'Unassigned'}</span></div></div>
+  ${b.issue&&expandIssue?`<div class="card"><h3>Reported Issue</h3><p style="font-size:.85rem">${b.issue.note}</p><p style="color:var(--muted);font-size:.78rem;margin-top:4px">Reported at ${b.issue.time}</p><div style="display:flex;gap:8px;margin-top:10px"><button class="btn primary" onclick="toast('Issue marked resolved');closeModal()">Resolve Issue</button><button class="btn" onclick="toast('Message sent to cleaner')">Contact Cleaner</button><button class="btn" onclick="toast('Message sent to customer')">Contact Customer</button></div></div>`:''}
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+    <button class="btn" onclick="toast('Opening WhatsApp/email…')">Contact Customer</button>
+    <button class="btn" onclick="openAssign('${b.id}')">${b.cleaner?'Reassign':'Assign'} Cleaner</button>
+    <button class="btn" onclick="openReschedule('${b.id}')">Reschedule</button>
+    ${b.status!=='Cancelled'&&b.status!=='Completed'?`<button class="btn danger" onclick="openCancel('${b.id}')">Cancel Booking</button>`:''}
+    ${b.payment==='Paid'?`<button class="btn" onclick="openRefund('${b.id}')">Refund</button>`:''}
+  </div>
+  </div></div>`;
+}
+
+function openAssign(id){
+  const b=findB(id);
+  const opts=AVAIL_CLEANERS().map(c=>`<div class="cleaneropt"><div><div class="nm">${c.name}</div><div class="meta">${c.zone} · ${c.status} · ${c.jobs} active jobs</div></div><button class="btn primary" onclick="confirmAssign('${b.id}','${c.id}')">Assign</button></div>`).join('');
+  document.getElementById('modalHost').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>${b.cleaner?'Reassign':'Assign'} Cleaner</h2><p style="color:var(--muted);font-size:.85rem">${b.id} · ${b.service} · ${b.date}, ${b.time} · ${b.area} (${b.zone})</p>
+  ${b.declined?`<div class="warnbox">Cleaner declined this booking.<br><b>${b.declined.by}</b> — ${b.declined.reason}</div>`:''}
+  ${b.cleaner?`<div class="sumline"><span>Current Cleaner</span><span>${b.cleaner}</span></div>`:''}
+  <h3 style="margin-top:14px;font-size:.9rem">Available Cleaners</h3>
+  ${opts||'<p style="color:var(--muted);font-size:.85rem">No cleaners currently available.</p>'}
+  </div></div>`;
+}
+function confirmAssign(bid,cid){
+  const b=findB(bid),c=CLEANERS.find(x=>x.id===cid);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <h2>Assign ${c.name.split(' ')[0]} to ${bid}?</h2>
+  <p style="color:var(--muted);font-size:.85rem;margin-top:8px">${b.service} · ${b.date}, ${b.time} · ${b.area}</p>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="doAssign('${bid}','${cid}')">Confirm Assignment</button></div>
+  </div></div>`;
+}
+function doAssign(bid,cid){
+  const b=findB(bid),c=CLEANERS.find(x=>x.id===cid);
+  b.cleaner=c.name; b.status='Confirmed'; delete b.declined;
+  closeModal(); render(); toast(`${c.name} assigned to ${bid}`);
+}
+
+function openReschedule(id){
+  const b=findB(id);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>Reschedule ${b.id}</h2>
+  <div class="sumline"><span>Current</span><span>${b.date}, ${b.time}</span></div>
+  <label class="field"><span>New Date</span><input type="text" id="rdate" placeholder="e.g. Sep 27, 2026"></label>
+  <label class="field"><span>New Time</span><input type="text" id="rtime" placeholder="e.g. 11:00 AM"></label>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="doReschedule('${b.id}')">Confirm Reschedule</button></div>
+  </div></div>`;
+}
+function doReschedule(id){
+  const d=document.getElementById('rdate').value,t=document.getElementById('rtime').value;
+  if(!d||!t) return toast('Enter a new date and time');
+  const b=findB(id); b.date=d; b.time=t;
+  closeModal(); render(); toast(`${id} rescheduled — customer and cleaner notified`);
+}
+
+function openCancel(id){
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>Cancel Booking</h2><p style="color:var(--muted);font-size:.85rem">${id} — this cannot be undone.</p>
+  <label class="field"><span>Reason</span><select id="cxlreason"><option>Customer requested</option><option>Cleaner unavailable</option><option>Operational issue</option><option>Payment issue</option><option>Other</option></select></label>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Back</button><button class="btn danger" onclick="doCancel('${id}')">Cancel Booking</button></div>
+  </div></div>`;
+}
+function doCancel(id){ const b=findB(id); b.status='Cancelled'; closeModal(); render(); toast(`${id} cancelled`); }
+
+function openRefund(id){
+  const b=findB(id);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>Refund ${id}</h2><div class="sumline"><span>Amount Paid</span><span>${money(b.amount)}</span></div>
+  <label class="field"><span>Refund Type</span><select id="rtype"><option>Full Refund</option><option>Partial Refund</option></select></label>
+  <label class="field"><span>Reason</span><input type="text" placeholder="Required" id="rreason"></label>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="doRefund('${id}')">Confirm Refund</button></div>
+  </div></div>`;
+}
+function doRefund(id){
+  if(!document.getElementById('rreason').value) return toast('Reason is required');
+  const b=findB(id); b.payment='Refunded'; closeModal(); render(); toast(`Refund processed for ${id}`);
+}
+
+function openCreateBooking(){
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>Create Booking</h2>
+  <label class="field"><span>Customer</span><select><option>Existing customer…</option>${CUSTOMERS.map(c=>`<option>${c.name}</option>`).join('')}<option>+ New customer</option></select></label>
+  <label class="field"><span>Service</span><select id="nsvc"><option>Standard Cleaning — ₦10,000</option><option>Deep Cleaning — ₦15,000</option><option>Move-In / Move-Out — ₦20,000</option></select></label>
+  <label class="field"><span>Date & Time</span><input type="text" placeholder="e.g. Sep 28, 2026, 10:00 AM"></label>
+  <label class="field"><span>Area</span><input type="text" placeholder="e.g. Bodija"></label>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="doCreateBooking()">Review Booking</button></div>
+  </div></div>`;
+}
+function doCreateBooking(){
+  const id='US-'+(1051+BOOKINGS.length-6);
+  BOOKINGS.unshift({id,customer:'New Customer',service:document.getElementById('nsvc').value.split(' —')[0],date:'Sep 28, 2026',time:'10:00 AM',area:'Bodija',zone:'Zone 1 — ₦3,000',cleaner:null,status:'Pending Assignment',amount:15000,payment:'Paid'});
+  closeModal(); go('bookings'); toast(`Booking ${id} created`);
+}
+
+/* ---------- CUSTOMERS ---------- */
+function pageCustomers(){
+  document.getElementById('content').innerHTML=`
+  <div class="toolbar"><div></div><button class="btn primary" onclick="toast('Add Customer form would open here')">+ Add Customer</button></div>
+  <div class="card"><table><tr><th>Name</th><th>Phone</th><th>Bookings</th><th>Total Spent</th><th></th></tr>
+  ${CUSTOMERS.map(c=>`<tr class="row" onclick="openCustomer('${c.id}')"><td>${c.name}</td><td>${c.phone}</td><td>${c.bookings}</td><td>${money(c.spent)}</td><td><button class="btn" onclick="event.stopPropagation();openCustomer('${c.id}')">View</button></td></tr>`).join('')}
+  </table></div>`;
+}
+function openCustomer(id){
+  const c=CUSTOMERS.find(x=>x.id===id);
+  const hist=BOOKINGS.filter(b=>b.customer===c.name);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>${c.name}</h2><p style="color:var(--muted);font-size:.85rem">${c.phone} · ${c.email}</p>
+  <div class="card" style="margin-top:14px"><div class="sumline"><span>Total Bookings</span><span>${c.bookings}</span></div><div class="sumline"><span>Completed</span><span>${c.completed}</span></div><div class="sumline"><span>Cancelled</span><span>${c.cancelled}</span></div><div class="sumline"><span>Total Spent</span><span>${money(c.spent)}</span></div></div>
+  <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn primary" onclick="closeModal();openCreateBooking()">Create Booking</button><button class="btn" onclick="toast('Booking form prefilled with last configuration — pricing recalculated')">Book Again</button><button class="btn" onclick="toast('Opening edit form…')">Edit Customer</button></div>
+  <h3 style="font-size:.9rem">Booking History</h3>
+  ${hist.map(b=>`<div class="attn" style="cursor:pointer" onclick="openBooking('${b.id}')"><div><div class="t">${b.id} · ${b.service}</div><div class="s">${b.date}</div></div>${statusPill(b.status)}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No bookings yet.</p>'}
+  </div></div>`;
+}
+
+/* ---------- CLEANERS ---------- */
+function pageCleaners(){
+  document.getElementById('content').innerHTML=`
+  <div class="toolbar"><div></div><button class="btn primary" onclick="toast('Add Cleaner form would open here')">+ Add Cleaner</button></div>
+  <div class="card"><table><tr><th>Name</th><th>Zone</th><th>Status</th><th>Active Jobs</th><th>Rating</th><th></th></tr>
+  ${CLEANERS.map(c=>`<tr class="row" onclick="openCleaner('${c.id}')"><td>${c.name}</td><td>${c.zone}</td><td>${c.status}</td><td>${c.jobs}</td><td>${c.rating}★</td><td><button class="btn" onclick="event.stopPropagation();openCleaner('${c.id}')">View</button></td></tr>`).join('')}
+  </table></div>`;
+}
+function openCleaner(id){
+  const c=CLEANERS.find(x=>x.id===id);
+  document.getElementById('modalHost').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer">
+  <button class="xclose" onclick="closeModal()">✕</button>
+  <h2>${c.name}</h2><p style="color:var(--muted);font-size:.85rem">${c.zone} · ${c.status}</p>
+  <div class="card" style="margin-top:14px"><div class="sumline"><span>Active Jobs</span><span>${c.jobs}</span></div><div class="sumline"><span>Rating</span><span>${c.rating}★</span></div><div class="sumline"><span>Total Earnings</span><span>${money(c.earnings)}</span></div><div class="sumline"><span>Pending Payout</span><span>${money(c.pending)}</span></div></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="toast('Opening editable cleaner form…')">Edit Cleaner</button>
+    <button class="btn" onclick="closeModal();go('availability')">Manage Availability</button>
+    <button class="btn" onclick="openBlock('${c.id}')">Block Availability</button>
+    <button class="btn ${c.status==='Inactive'?'primary':'danger'}" onclick="toggleCleaner('${c.id}')">${c.status==='Inactive'?'Activate':'Deactivate'}</button>
+  </div></div></div>`;
+}
+function toggleCleaner(id){
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal"><h2>Change status?</h2><p style="color:var(--muted);font-size:.85rem;margin-top:8px">Existing bookings will be flagged for review rather than removed.</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="openCleaner('${id}')">Cancel</button><button class="btn primary" onclick="doToggle('${id}')">Confirm</button></div></div></div>`;
+}
+function doToggle(id){ const c=CLEANERS.find(x=>x.id===id); c.status=c.status==='Inactive'?'Available':'Inactive'; closeModal(); render(); toast('Cleaner status updated'); }
+function openBlock(id){
+  document.getElementById('modalHost').innerHTML=`<div class="overlay center"><div class="modal">
+  <button class="xclose" onclick="closeModal()">✕</button><h2>Block Availability</h2>
+  <label class="field"><span>Date Range</span><input type="text" placeholder="e.g. Sep 28–30, 2026"></label>
+  <label class="field"><span>Reason</span><input type="text" placeholder="e.g. Personal leave"></label>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="closeModal();toast('Dates blocked')">Block Dates</button></div>
+  </div></div>`;
+}
+
+/* ---------- LEAN SCAFFOLDED PAGES ---------- */
+function pageAvailability(){
+  document.getElementById('content').innerHTML=`<div class="card"><h3>Cleaner Availability — Today</h3>
+  <table><tr><th>Cleaner</th><th>Zone</th><th>Status</th><th>Jobs Today</th><th></th></tr>
+  ${CLEANERS.map(c=>`<tr class="row"><td>${c.name}</td><td>${c.zone}</td><td>${c.status}</td><td>${c.jobs}</td><td><button class="btn" onclick="toast('Availability editor would open here')">Edit</button></td></tr>`).join('')}</table></div>
+  <div class="card"><h3>Pending Time-Off Requests</h3><p style="color:var(--muted);font-size:.85rem">No pending requests right now.</p></div>`;
+}
+function pageZones(){
+  const zones=[[1,3000],[2,3500],[3,4500],[4,5500]];
+  document.getElementById('content').innerHTML=`<div class="kpis" style="grid-template-columns:repeat(4,1fr)">${zones.map(z=>`<div class="kpi"><div class="n">${money(z[1])}${z[0]===4?'+':''}</div><div class="l">Zone ${z[0]}</div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn" onclick="toast('Areas list for Zone ${z[0]} would open here')">Manage Areas</button><button class="btn" onclick="toast('Zone editor would open here')">Edit</button></div></div>`).join('')}</div>
+  <div class="card"><h3>Coverage Areas</h3><p style="color:var(--muted);font-size:.85rem">Bodija, Jericho, Ring Road, Mokola, Akobo, Iwo Road and 40+ other Ibadan areas are mapped to these zones.</p></div>`;
+}
+function pagePricing(){
+  const svcs=[['Standard Cleaning',10000],['Deep Cleaning',15000],['Move-In / Move-Out',20000]];
+  document.getElementById('content').innerHTML=`<div class="kpis" style="grid-template-columns:repeat(3,1fr)">${svcs.map(s=>`<div class="kpi"><div class="n">${money(s[1])}</div><div class="l">${s[0]}</div><button class="btn" style="margin-top:10px;width:100%" onclick="toast('Pricing editor for ${s[0]} would open here')">Edit Pricing</button></div>`).join('')}</div>
+  <div class="card"><h3>Add-ons</h3><div class="sumline"><span>Heavy Dishwashing (Standard)</span><span>₦2,000</span></div><div class="sumline"><span>Fridge Cleaning (Standard)</span><span>₦2,000</span></div><button class="btn" style="margin-top:10px" onclick="toast('Add-on form would open here')">+ Add Add-on</button></div>`;
+}
+function pagePayments(){
+  const paid=BOOKINGS.filter(b=>b.payment==='Paid').reduce((s,b)=>s+b.amount,0);
+  document.getElementById('content').innerHTML=`<div class="section-tabs"><button class="on">Revenue</button><button onclick="toast('Cleaner Payouts view')">Cleaner Payouts</button></div>
+  <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+  <div class="kpi"><div class="n">${money(paid)}</div><div class="l">Total Revenue</div></div>
+  <div class="kpi"><div class="n">${money(CLEANERS.reduce((s,c)=>s+c.pending,0))}</div><div class="l">Pending Payouts</div></div>
+  <div class="kpi"><div class="n">${money(420000)}</div><div class="l">Paid This Month</div></div>
+  <div class="kpi"><div class="n">1</div><div class="l">Refunds</div></div></div>
+  <div class="card"><h3>Recent Transactions</h3><table><tr><th>Ref</th><th>Customer</th><th>Amount</th><th>Status</th></tr>
+  ${BOOKINGS.map(b=>`<tr class="row" onclick="openBooking('${b.id}')"><td>${b.id}</td><td>${b.customer}</td><td>${money(b.amount)}</td><td>${b.payment}</td></tr>`).join('')}</table></div>
+  <div class="card"><h3>Cleaner Payouts</h3><table><tr><th>Cleaner</th><th>Pending</th><th>Total Earned</th><th></th></tr>
+  ${CLEANERS.filter(c=>c.pending>0).map(c=>`<tr><td>${c.name}</td><td>${money(c.pending)}</td><td>${money(c.earnings)}</td><td><button class="btn primary" onclick="toast('Payout marked as paid')">Mark as Paid</button></td></tr>`).join('')||'<tr><td colspan=4 style="color:var(--muted)">No pending payouts.</td></tr>'}</table></div>`;
+}
+function pageReviews(){
+  document.getElementById('content').innerHTML=`<div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><div class="n">4.7★</div><div class="l">Average Rating</div></div><div class="kpi"><div class="n">128</div><div class="l">Total Reviews</div></div><div class="kpi"><div class="n">2</div><div class="l">Flagged</div></div></div>
+  <div class="card"><h3>Recent Reviews</h3><div class="attn"><div><div class="t">Folake Ade — ★★★★★</div><div class="s">"Grace did a fantastic job, very thorough."</div></div><button class="btn" onclick="openBooking('US-1046')">View Booking</button></div></div>`;
+}
+function pageNotifications(){
+  document.getElementById('content').innerHTML=`<div class="card">
+  ${['2 bookings need assignment','Blessing declined US-1049','Payment received for US-1046'].map((n,i)=>`<div class="attn" style="cursor:pointer" onclick="${i===0?"go('bookings',{status:'Pending Assignment'})":i===1?"openAssign('US-1049')":"openBooking('US-1046')"}"><div class="t">${n}</div></div>`).join('')}
+  <button class="btn" style="margin-top:10px" onclick="toast('All notifications marked read')">Mark All as Read</button></div>`;
+}
+function pageReports(){
+  document.getElementById('content').innerHTML=`<div class="grid2c"><div class="card"><h3>Bookings by Zone</h3>
+  ${['Zone 1','Zone 2','Zone 3','Zone 4'].map(z=>`<div class="attn" style="cursor:pointer" onclick="go('bookings',{zone:BOOKINGS.find(b=>b.zone.startsWith('${z}'))?.zone||''})"><div class="t">${z}</div><div class="t">${BOOKINGS.filter(b=>b.zone.startsWith(z)).length}</div></div>`).join('')}</div>
+  <div class="card"><h3>Cancellation Trends</h3><p style="color:var(--muted);font-size:.85rem">${BOOKINGS.filter(b=>b.status==='Cancelled').length} cancellations in the last 7 days.</p></div></div>`;
+}
+function pageSettings(){
+  document.getElementById('content').innerHTML=`<div class="card"><h3>Cleaner Payment Settings</h3><div class="sumline"><span>Cleaner Share of Cleaning Charges</span><span>40%</span></div><div class="sumline"><span>Logistics to Cleaner</span><span>100%</span></div><button class="btn" style="margin-top:10px" onclick="toast('Changing payout rules affects future bookings only')">Save Payout Settings</button></div>
+  <div class="card"><h3>Booking Settings</h3><div class="sumline"><span>Lead Time</span><span>2 hours</span></div><div class="sumline"><span>Deposit</span><span>0% (full payment)</span></div><button class="btn" style="margin-top:10px" onclick="toast('Booking settings saved')">Save Booking Settings</button></div>
+  <div class="card"><h3>Admins & Permissions</h3><div class="sumline"><span>Shekemi</span><span>Super Admin</span></div><button class="btn" style="margin-top:10px" onclick="toast('Add Admin form would open here')">+ Add Admin</button></div>`;
+}
+function pageCalendar(){
+  document.getElementById('content').innerHTML=`<div class="toolbar"><div class="filters"><button class="btn" onclick="toast('Jumped to today')">Today</button><button class="btn">‹</button><button class="btn">›</button></div><div class="filters"><select><option>Week</option><option>Day</option><option>Month</option></select></div></div>
+  <div class="card"><h3>Sep 25, 2026</h3>${BOOKINGS.filter(b=>b.date==='Sep 25, 2026').map(b=>`<div class="attn" style="cursor:pointer" onclick="openBooking('${b.id}')"><div><div class="t">${b.time} — ${b.id}</div><div class="s">${b.customer} · ${b.area} · ${b.cleaner||'Unassigned'}</div></div>${statusPill(b.status)}</div>`).join('')}</div>`;
+}
+
+const PAGES={dashboard:pageDashboard,bookings:pageBookings,calendar:pageCalendar,customers:pageCustomers,cleaners:pageCleaners,availability:pageAvailability,zones:pageZones,pricing:pagePricing,payments:pagePayments,reviews:pageReviews,notifications:pageNotifications,reports:pageReports,settings:pageSettings};
+
+function render(){
+  buildNav();
+  document.getElementById('pgTitle').textContent=TITLES[route][0];
+  document.getElementById('pgDesc').textContent=TITLES[route][1];
+  PAGES[route]();
+}
+render();
+const $h=()=>document.getElementById('modalHost'),$c=()=>document.getElementById('content');
+const SETP={pct:40,lgpct:100};
+const PR={Standard:{n:'Standard Cleaning',base:10000,x:[2000,2500,1500,2000,2500,500],sup:3500,add:[['Heavy Dishwashing',2000],['Fridge Cleaning',2000]]},
+Deep:{n:'Deep Cleaning',base:15000,x:[3000,3000,2000,3000,3500,1000],sup:4500,add:[]},
+Move:{n:'Move-In / Move-Out',base:20000,x:[3000,3000,2000,3000,3500,1000],sup:6000,add:[]}};
+const QL=[['Bedrooms',1],['Bathrooms',1],['Guest Toilets',0],['Living Rooms',1],['Kitchens',1],['Balconies',1]];
+const AREAS={Bodija:1,Agodi:1,Mokola:1,Samonda:1,Sango:1,Jericho:2,'Ring Road':2,Challenge:2,Molete:2,Akobo:3,Moniya:3,Egbeda:3,Sasa:3,'Far Akinyele':4};
+const ZN={1:['Zone 1 — Central / Close',3000],2:['Zone 2 — Inner Ibadan',3500],3:['Zone 3 — Outer Ibadan',4500],4:['Zone 4 — Far / Special',5500]};
+const AUDIT=[];const AL=(a,r,p,n)=>AUDIT.unshift({a,r,p,n});
+let NOTIFS=[{m:'2 bookings need assignment',t:'System',act:"go('bookings',{status:'Pending Assignment'})",r:0,d:'In-app'},{m:'Blessing declined US-1049',t:'Cleaners',act:"openAssign('US-1049')",r:0,d:'Delivered'},{m:'Payment received for US-1046',t:'Customers',act:"openBooking('US-1046')",r:0,d:'Delivered'},{m:'Payout pending: Blessing Okafor',t:'System',act:"go('payments',{tab:'payouts'})",r:0,d:'In-app'},{m:'Refund processed for US-1045',t:'Customers',act:"openBooking('US-1045')",r:0,d:'Delivered'}];
+NAV[3].items[0][2]=()=>NOTIFS.filter(n=>!n.r).length;
+NAV[1].items[1][2]=()=>0;
+NAV[2].items[1][2]=()=>PAYOUTS.filter(p=>p.status==='Pending Payout').length;
+let PAYOUTS=[{id:'PO-201',cleaner:'Blessing Okafor',booking:'US-1046',date:'Sep 24, 2026',cl:10500,pct:40,lgpct:100,lg:3500,adj:[],status:'Pending Payout'},{id:'PO-200',cleaner:'Grace Eze',booking:'US-1044',date:'Sep 20, 2026',cl:14000,pct:40,lgpct:100,lg:3000,adj:[],status:'Paid',paid:{d:'Sep 22, 2026',m:'Bank Transfer',ref:'TRF-88213'}}];
+const share=p=>Math.round(p.cl*p.pct/100),fin=p=>share(p)+Math.round(p.lg*p.lgpct/100)+p.adj.reduce((s,a)=>s+a.amt,0);
+function syncPending(){CLEANERS.forEach(c=>c.pending=PAYOUTS.filter(p=>p.cleaner===c.name&&p.status==='Pending Payout').reduce((s,p)=>s+fin(p),0))}
+syncPending();
+const _go=go;go=function(r,f){if(!f&&r!==route)bFilter={status:'',zone:'',service:''};_go(r,f)};
+const _render=render;render=function(){_render();upd()};
+function upd(){const n=NOTIFS.filter(x=>!x.r).length,d=document.querySelector('.bell .dot');d.textContent=n;d.style.display=n?'':'none'}
+document.querySelector('.bell').onclick=openBell;
+
+/* Notifications */
+function openBell(){$h().innerHTML=`<div class="overlay" style="align-items:flex-start" onclick="if(event.target===this)closeModal()"><div class="modal" style="margin:64px 28px 0 auto;width:360px"><h2>Notifications</h2>${NOTIFS.map((n,i)=>`<div class="attn" style="cursor:pointer;${n.r?'opacity:.55':'background:var(--paper);padding-left:8px'}" onclick="readN(${i})"><div class="t">${n.m}</div></div>`).join('')||'<div class="empty">You are all caught up.</div>'}<button class="btn" style="margin-top:10px" onclick="markAll()">Mark All as Read</button></div></div>`}
+function readN(i){NOTIFS[i].r=1;closeModal();new Function(NOTIFS[i].act)();render()}
+function markAll(){NOTIFS.forEach(n=>n.r=1);closeModal();render();toast('All notifications marked as read')}
+PAGES.notifications=function(){const t=bFilter.ntab||'All',l=NOTIFS.filter(n=>t==='All'||n.t===t);$c().innerHTML=`<div class="section-tabs">${['All','Customers','Cleaners','System'].map(x=>`<button class="${x===t?'on':''}" onclick="bFilter.ntab='${x}';render()">${x}</button>`).join('')}</div><div class="card">${l.map((n,i)=>`<div class="attn" style="cursor:pointer" onclick="NOTIFS[${NOTIFS.indexOf(n)}].r=1;${n.act}"><div><div class="t">${n.m}</div><div class="s">${n.t} · ${n.d} · ${n.r?'Read':'Unread'}</div></div></div>`).join('')||'<div class="empty"><h3>You are all caught up</h3></div>'}<button class="btn" onclick="markAll()">Mark All as Read</button></div>`};
+
+/* Booking detail with valid transitions + timeline */
+const NEXT={'Awaiting Payment':'Pending Assignment','Confirmed':'Cleaner En Route','Cleaner En Route':'Cleaning Started','Cleaning Started':'Completed'};
+const L=b=>{if(!b.log){b.log=[['Booking created','System']];if(b.payment==='Paid')b.log.push(['Payment received','Paystack']);if(b.cleaner)b.log.push(['Cleaner assigned','Shekemi'])}return b.log};
+function openBooking(id,ex){const b=findB(id),s=b.snap,n=NEXT[b.status];
+$h().innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer"><button class="xclose" onclick="closeModal()">✕</button>
+<span class="tag2">${b.id}</span><h2>${b.service}${b.ctype?' — '+b.ctype:''}</h2><p style="color:var(--muted);font-size:.85rem">${b.customer} · ${b.date} · ${b.time}</p>${statusPill(b.status)}
+${n?`<button class="btn primary" style="margin-left:8px" onclick="adv('${id}')">${b.status==='Awaiting Payment'?'Verify Payment':'Advance → '+n}</button>`:''}
+<div class="card" style="margin-top:16px"><h3>Location</h3><div class="sumline"><span>Area</span><span>${b.area}</span></div><div class="sumline"><span>Zone</span><span>${b.zone}</span></div>${b.addr?`<div class="sumline"><span>Address</span><span>${b.addr}</span></div>`:''}</div>
+<div class="card"><h3>Payment</h3>${s?`<div class="sumline"><span>Base</span><span>${money(s.base)}</span></div><div class="sumline"><span>Extra spaces</span><span>${money(s.ex)}</span></div><div class="sumline"><span>Add-ons</span><span>${money(s.ad)}</span></div><div class="sumline"><span>Supplies</span><span>${money(s.sp)}</span></div><div class="sumline"><span>Logistics</span><span>${money(s.lg)}</span></div>`:''}<div class="sumline"><span>Total</span><b>${money(b.amount)}</b></div><div class="sumline"><span>Payment</span><span>${b.payment}</span></div></div>
+<div class="card"><h3>Cleaner</h3><div class="sumline"><span>Assigned</span><span>${b.cleaner||'Unassigned'}</span></div></div>
+${b.issue&&ex?`<div class="card"><h3>Reported Issue</h3><p style="font-size:.85rem">${b.issue.note}</p><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn primary" onclick="resolveIssue('${id}')">Resolve Issue</button><button class="btn" onclick="toast('Message sent to cleaner')">Contact Cleaner</button><button class="btn" onclick="toast('Message sent to customer')">Contact Customer</button></div></div>`:''}
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0"><button class="btn" onclick="toast('Opening WhatsApp / email…')">Contact Customer</button><button class="btn" onclick="openAssign('${id}')">${b.cleaner?'Reassign':'Assign'} Cleaner</button><button class="btn" onclick="openReschedule('${id}')">Reschedule</button>${['Cancelled','Completed'].includes(b.status)?'':`<button class="btn danger" onclick="openCancel('${id}')">Cancel Booking</button>`}${b.payment==='Paid'?`<button class="btn" onclick="openRefund('${id}')">Refund</button>`:''}</div>
+<h3 style="font-size:.9rem;margin-bottom:6px">Activity</h3>${L(b).map(t=>`<div class="sumline"><span>${t[0]}</span><span style="color:var(--muted)">${t[1]}</span></div>`).join('')}</div></div>`}
+function resolveIssue(id){delete findB(id).issue;L(findB(id)).push(['Issue resolved','Shekemi']);closeModal();render();toast('Issue resolved')}
+function adv(id){const b=findB(id),n=NEXT[b.status];L(b);if(b.status==='Awaiting Payment'){b.payment='Paid';b.log.push(['Payment verified server-side (Paystack)','System'])}
+b.status=n;b.log.push(['Status → '+n,'Shekemi']);
+if(n==='Completed'&&b.cleaner){const lg=+((b.zone.split('—')[1]||'0').replace(/\D/g,'')),cl=b.cl||Math.max(0,b.amount-lg);PAYOUTS.unshift({id:'PO-'+(202+PAYOUTS.length),cleaner:b.cleaner,booking:b.id,date:b.date,cl,pct:SETP.pct,lgpct:SETP.lgpct,lg,adj:[],status:'Pending Payout'});syncPending();b.log.push(['Payout created (Pending Payout)','System']);NOTIFS.unshift({m:'Payout pending: '+b.cleaner,t:'System',act:"go('payments',{tab:'payouts'})",r:0,d:'In-app'})}
+closeModal();render();openBooking(id);toast('Status updated to '+n)}
+function doAssign(bid,cid){const b=findB(bid),c=CLEANERS.find(x=>x.id===cid);L(b);b.cleaner=c.name;b.status='Confirmed';delete b.declined;b.log.push(['Cleaner assigned: '+c.name,'Shekemi']);AL('Shekemi','Assigned '+bid,'—',c.name);NOTIFS.unshift({m:c.name+' notified of '+bid,t:'Cleaners',act:`openBooking('${bid}')`,r:0,d:'Delivered'});closeModal();render();toast(c.name+' assigned to '+bid)}
+
+/* Create booking with pricing engine */
+let cb;
+const cbInit=c=>cb={cust:c||'',nn:'',svc:'Standard',ct:'Moving In',qty:[1,1,0,1,1,1],add:[],sup:'client',date:'',time:'',area:'',addr:'',rev:0,busy:0};
+function cbPrice(){const p=PR[cb.svc];let ex=0;cb.qty.forEach((q,i)=>ex+=(q-QL[i][1])*p.x[i]);const ad=cb.add.reduce((s,a)=>s+(p.add.find(x=>x[0]===a)||[0,0])[1],0),z=AREAS[cb.area],lg=z?ZN[z][1]:0,sp=cb.sup==='us'?p.sup:0,cl=p.base+ex+ad;return{base:p.base,ex,ad,sp,lg,z,cl,total:cl+sp+lg}}
+function openCreateBooking(c){cbInit(typeof c==='string'?c:'');renderCB()}
+function cbq(i,d){cb.qty[i]=Math.max(QL[i][1],cb.qty[i]+d);renderCB()}
+function cbTog(a){cb.add=cb.add.includes(a)?cb.add.filter(x=>x!==a):cb.add.concat(a);renderCB()}
+function cbOk(){return (cb.cust&&(cb.cust!=='__new'||cb.nn))&&cb.date&&cb.time&&AREAS[cb.area]&&cb.addr}
+function renderCB(){const p=PR[cb.svc],q=cbPrice(),unk=cb.area&&!AREAS[cb.area];
+const pr=`<div class="card" style="margin:12px 0 0"><div class="sumline"><span>Cleaning</span><span>${money(q.cl)}</span></div><div class="sumline"><span>Supplies</span><span>${money(q.sp)}</span></div><div class="sumline"><span>Logistics ${q.z?'('+ZN[q.z][0]+')':''}</span><span>${money(q.lg)}</span></div><div class="sumline"><b>Total</b><b>${money(q.total)}</b></div></div>`;
+$h().innerHTML=`<div class="overlay center"><div class="modal" style="width:520px;max-height:92vh;overflow:auto"><button class="xclose" onclick="closeModal()">✕</button><h2>${cb.rev?'Review Booking':'Create Booking'}</h2>`+(cb.rev?`
+<div class="sumline"><span>Customer</span><span>${cb.cust==='__new'?cb.nn:cb.cust}</span></div><div class="sumline"><span>Service</span><span>${p.n}${cb.svc==='Move'?' — '+cb.ct:''}</span></div>
+<div class="sumline"><span>Spaces</span><span>${QL.map((l,i)=>cb.qty[i]+' '+l[0]).join(', ')}</span></div>${cb.add.length?`<div class="sumline"><span>Add-ons</span><span>${cb.add.join(', ')}</span></div>`:''}
+<div class="sumline"><span>Supplies</span><span>${cb.sup==='us'?'UrbanShine provides':'Client provides'}</span></div><div class="sumline"><span>When</span><span>${cb.date}, ${cb.time}</span></div><div class="sumline"><span>Location</span><span>${cb.addr}, ${cb.area}</span></div>${pr}
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="cb.rev=0;renderCB()" ${cb.busy?'disabled':''}>Back</button><button class="btn primary" onclick="cbCreate()" ${cb.busy?'disabled':''}>${cb.busy?'Creating...':'Create Booking'}</button></div>`:`
+<label class="field"><span>Customer</span><select onchange="cb.cust=this.value;renderCB()"><option value="">Select…</option>${CUSTOMERS.map(c=>`<option ${cb.cust===c.name?'selected':''}>${c.name}</option>`).join('')}<option value="__new" ${cb.cust==='__new'?'selected':''}>+ New customer</option></select></label>
+${cb.cust==='__new'?`<label class="field"><span>New customer name</span><input value="${cb.nn}" oninput="cb.nn=this.value"></label>`:''}
+<label class="field"><span>Service</span><select onchange="cb.svc=this.value;cb.add=[];renderCB()">${Object.keys(PR).map(k=>`<option value="${k}" ${cb.svc===k?'selected':''}>${PR[k].n} — ${money(PR[k].base)}</option>`).join('')}</select></label>
+${cb.svc==='Move'?`<label class="field"><span>What type of cleaning is this?</span><select onchange="cb.ct=this.value"><option>Moving In</option><option ${cb.ct==='Moving Out'?'selected':''}>Moving Out</option></select></label>`:''}
+${QL.map((l,i)=>`<div class="sumline"><span>${l[0]}</span><span><button class="btn" ${cb.qty[i]<=l[1]?'disabled':''} onclick="cbq(${i},-1)">−</button> <b>${cb.qty[i]}</b> <button class="btn" onclick="cbq(${i},1)">+</button></span></div>`).join('')}
+${p.add.length?`<h3 style="font-size:.9rem;margin:12px 0 4px">Add-ons</h3>${p.add.map(a=>`<label class="sumline"><span><input type="checkbox" ${cb.add.includes(a[0])?'checked':''} onchange="cbTog('${a[0]}')"> ${a[0]}</span><span>${money(a[1])}</span></label>`).join('')}`:''}
+<label class="field"><span>Cleaning supplies (UrbanShine supplies; tools are provided by the client)</span><select onchange="cb.sup=this.value;renderCB()"><option value="client">Client provides — ₦0</option><option value="us" ${cb.sup==='us'?'selected':''}>UrbanShine provides — ${money(p.sup)}</option></select></label>
+<label class="field"><span>Date</span><input value="${cb.date}" placeholder="e.g. Sep 28, 2026" oninput="cb.date=this.value"></label><label class="field"><span>Time</span><input value="${cb.time}" placeholder="e.g. 10:00 AM" oninput="cb.time=this.value"></label>
+<label class="field"><span>Area</span><input list="al" value="${cb.area}" placeholder="Start typing, e.g. Bod" onchange="cb.area=this.value;renderCB()"><datalist id="al">${Object.keys(AREAS).map(a=>`<option>${a}</option>`).join('')}</datalist></label>
+${q.z?`<p style="color:var(--jade);font-size:.85rem">${ZN[q.z][0]} — Logistics ${money(q.lg)}</p>`:''}${unk?`<div class="warnbox">We haven't assigned a logistics zone to this area yet. Please contact UrbanShine to confirm service availability. Add it under Zones &amp; Areas.</div>`:''}
+<label class="field"><span>Full address</span><input value="${cb.addr}" oninput="cb.addr=this.value"></label>${pr}
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="if(!cbOk())return toast('Complete customer, date, time, a known area and address');cb.rev=1;renderCB()">Review Booking</button></div>`)+`</div></div>`}
+function cbCreate(){if(cb.busy)return;cb.busy=1;renderCB();setTimeout(()=>{const q=cbPrice(),id='US-'+(1051+BOOKINGS.length-6);BOOKINGS.unshift({id,customer:cb.cust==='__new'?cb.nn:cb.cust,service:PR[cb.svc].n,ctype:cb.svc==='Move'?cb.ct:'',date:cb.date,time:cb.time,area:cb.area,addr:cb.addr,zone:ZN[q.z][0].split(' — ')[0]+' — '+money(q.lg),cleaner:null,status:'Awaiting Payment',amount:q.total,cl:q.cl,payment:'Pending',snap:q});AL('Shekemi','Created '+id,'—',money(q.total));closeModal();go('bookings');openBooking(id);toast('Booking '+id+' created')},700)}
+
+/* Payments: revenue tab + cleaner payouts */
+const _pay=PAGES.payments;
+PAGES.payments=function(){syncPending();if(bFilter.tab!=='payouts'){_pay();const t=document.querySelectorAll('.section-tabs button');t[1].onclick=()=>go('payments',{tab:'payouts'});return}
+const f=bFilter.pstatus||'',rows=PAYOUTS.filter(p=>!f||p.status===f),pend=PAYOUTS.filter(p=>p.status==='Pending Payout'),paid=PAYOUTS.filter(p=>p.status==='Paid');
+$c().innerHTML=`<div class="section-tabs"><button onclick="go('payments')">Revenue</button><button class="on">Cleaner Payouts</button></div>
+<div class="kpis" style="grid-template-columns:repeat(4,1fr)"><div class="kpi" onclick="bFilter.pstatus='Pending Payout';render()"><div class="n">${money(pend.reduce((s,p)=>s+fin(p),0))}</div><div class="l">Pending Payouts</div></div><div class="kpi" onclick="bFilter.pstatus='Paid';render()"><div class="n">${money(paid.reduce((s,p)=>s+fin(p),0))}</div><div class="l">Paid</div></div><div class="kpi"><div class="n">${money(PAYOUTS.filter(p=>p.status!=='Reversed').reduce((s,p)=>s+fin(p),0))}</div><div class="l">Total Cleaner Earnings</div></div><div class="kpi"><div class="n">${new Set(pend.map(p=>p.cleaner)).size}</div><div class="l">Cleaners Awaiting Payment</div></div></div>
+<div class="filters"><select onchange="bFilter.pstatus=this.value;render()"><option value="">All Statuses</option>${['Pending Payout','Paid','Reversed'].map(s=>`<option ${f===s?'selected':''}>${s}</option>`).join('')}</select><button class="btn" onclick="bFilter.pstatus='';render()">Clear Filters</button></div>
+<div class="card">${rows.length?`<table><tr><th>ID</th><th>Cleaner</th><th>Booking</th><th>Cleaning</th><th>40% Share</th><th>Logistics</th><th>Total</th><th>Status</th><th></th></tr>${rows.map(p=>`<tr class="row" onclick="openPayout('${p.id}')"><td>${p.id}</td><td>${p.cleaner}</td><td>${p.booking}</td><td>${money(p.cl)}</td><td>${money(share(p))}</td><td>${money(p.lg)}</td><td><b>${money(fin(p))}</b></td><td>${statusPill2(p.status)}</td><td><button class="btn" onclick="event.stopPropagation();openPayout('${p.id}')">View</button></td></tr>`).join('')}</table>`:'<div class="empty"><h3>No cleaner payouts yet</h3><p>Payouts are created when cleanings are completed.</p></div>'}</div>`};
+const statusPill2=s=>`<span class="pill ${{'Pending Payout':'p-pend','Paid':'p-done','Reversed':'p-cancel'}[s]}">${s}</span>`;
+const fp=id=>PAYOUTS.find(p=>p.id===id);
+function openPayout(id){const p=fp(id);$h().innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer"><button class="xclose" onclick="closeModal()">✕</button><span class="tag2">${p.id}</span><h2>${p.cleaner}</h2><p style="color:var(--muted);font-size:.85rem">${p.booking} · ${p.date}</p>${statusPill2(p.status)}
+<div class="card" style="margin-top:14px"><div class="sumline"><span>Cleaning charges (base + extras + add-ons)</span><span>${money(p.cl)}</span></div><div class="sumline"><span>Cleaner share (${p.pct}%)</span><span>${money(share(p))}</span></div><div class="sumline"><span>Logistics (${p.lgpct}%)</span><span>${money(Math.round(p.lg*p.lgpct/100))}</span></div>${p.adj.map(a=>`<div class="sumline"><span>Adjustment: ${a.why}</span><span>${a.amt>0?'+':''}${money(a.amt)}</span></div>`).join('')}<div class="sumline"><b>Final payout</b><b>${money(fin(p))}</b></div><p style="color:var(--muted);font-size:.75rem;margin-top:8px">Supplies excluded. Snapshot of rules at time of completion.</p></div>
+${p.paid?`<div class="card"><h3>Payment</h3><div class="sumline"><span>Date</span><span>${p.paid.d}</span></div><div class="sumline"><span>Method</span><span>${p.paid.m}</span></div><div class="sumline"><span>Reference</span><span>${p.paid.ref}</span></div></div>`:''}${p.rev?`<div class="warnbox">Reversed: ${p.rev}</div>`:''}
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="openBooking('${p.booking}')">View Booking</button>${p.status==='Pending Payout'?`<button class="btn primary" onclick="poPaid('${id}')">Mark as Paid</button><button class="btn" onclick="poAdj('${id}')">Adjust Payout</button>`:''}${p.status==='Paid'?`<button class="btn danger" onclick="poRev('${id}')">Reverse Payout</button>`:''}</div>
+${AUDIT.filter(a=>a.r.includes(id)).map(a=>`<div class="sumline"><span>${a.a}: ${a.r}</span><span>${a.p} → ${a.n}</span></div>`).join('')}</div></div>`}
+const poModal=(t,body,btn,fn)=>{$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>${t}</h2>${body}<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn ${btn[1]}" id="pob" onclick="${fn}">${btn[0]}</button></div></div></div>`};
+const busy=t=>{const b=document.getElementById('pob');if(b.disabled)return 0;b.disabled=1;b.textContent=t;return 1};
+function poPaid(id){const p=fp(id);poModal('Mark as Paid',`<div class="sumline"><span>${p.cleaner} · ${p.booking}</span><b>${money(fin(p))}</b></div><label class="field"><span>Payment date</span><input id="pd" value="Sep 28, 2026"></label><label class="field"><span>Method</span><select id="pm"><option>Bank Transfer</option><option>Cash</option><option>Other</option></select></label><label class="field"><span>Reference</span><input id="pr" placeholder="Required"></label>`,['Confirm Payment','primary'],`donePaid('${id}')`)}
+function donePaid(id){const r=document.getElementById('pr').value;if(!r)return toast('Enter a payment reference');if(!busy('Processing...'))return;setTimeout(()=>{const p=fp(id);p.status='Paid';p.paid={d:document.getElementById('pd').value,m:document.getElementById('pm').value,ref:r};AL('Shekemi','Paid '+id,'Pending Payout','Paid');syncPending();closeModal();render();toast('Payout marked as paid')},500)}
+function poAdj(id){const p=fp(id);poModal('Adjust Payout',`<div class="sumline"><span>Original payout</span><span>${money(fin(p))}</span></div><label class="field"><span>Adjustment (₦, negative to deduct)</span><input id="aa" type="number" oninput="document.getElementById('af').textContent=money(${fin(p)}+(+this.value||0))"></label><label class="field"><span>Reason</span><input id="aw" placeholder="Required"></label><div class="sumline"><b>Final payout</b><b id="af">${money(fin(p))}</b></div>`,['Confirm Adjustment','primary'],`doneAdj('${id}')`)}
+function doneAdj(id){const a=+document.getElementById('aa').value,w=document.getElementById('aw').value;if(!a||!w)return toast('Enter an amount and a reason');const p=fp(id);p.adj.push({amt:a,why:w});AL('Shekemi','Adjusted '+id,'—',(a>0?'+':'')+money(a));syncPending();closeModal();render();toast('Adjustment saved — original calculation preserved')}
+function poRev(id){poModal('Reverse Payout','<div class="warnbox">This marks the payout as reversed. Payout history is preserved. Finance / Super Admin only.</div><label class="field"><span>Reason</span><input id="rr" placeholder="Required"></label>',['Reverse Payout','danger'],`doneRev('${id}')`)}
+function doneRev(id){const w=document.getElementById('rr').value;if(!w)return toast('A reason is required');const p=fp(id);p.status='Reversed';p.rev=w;AL('Shekemi','Reversed '+id,'Paid','Reversed');syncPending();closeModal();render();toast('Payout reversed')}
+render();
+
+/* ---- PRICING & ADD-ONS ---- */
+PAGES.pricing=function(){$c().innerHTML=`<div class="kpis" style="grid-template-columns:repeat(3,1fr)">${Object.keys(PR).map(k=>`<div class="kpi"><div class="n">${money(PR[k].base)}</div><div class="l">${PR[k].n}</div><button class="btn" style="margin-top:10px;width:100%" onclick="openPriceEdit('${k}')">Edit Pricing</button></div>`).join('')}</div>
+<div class="card"><h3>Add-ons <span class="sm" onclick="openAddonMgr()">Manage Add-ons</span></h3>${PR.Standard.add.map(a=>`<div class="sumline"><span>${a[0]} (Standard)</span><span>${money(a[1])}</span></div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No add-ons.</p>'}</div>`};
+const XLABELS=['Extra bedroom','Extra bathroom','Guest toilet','Extra living room','Extra kitchen','Extra balcony'];
+function openPriceEdit(k){const p=PR[k];$h().innerHTML=`<div class="overlay center"><div class="modal" style="max-height:88vh;overflow:auto"><button class="xclose" onclick="closeModal()">✕</button><h2>${p.n} — Pricing</h2>
+<label class="field"><span>Base price</span><input id="pb" type="number" value="${p.base}"></label>
+${XLABELS.map((l,i)=>`<label class="field"><span>${l}</span><input class="px" data-i="${i}" type="number" value="${p.x[i]}"></label>`).join('')}
+<label class="field"><span>Supplies price</span><input id="psup" type="number" value="${p.sup}"></label>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="confirmPrice('${k}')">Save Changes</button></div></div></div>`}
+function confirmPrice(k){window.__pv={base:+document.getElementById('pb').value,x:[...document.querySelectorAll('.px')].map(e=>+e.value),sup:+document.getElementById('psup').value};
+$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Apply changes?</h2><p style="color:var(--muted);font-size:.85rem;margin-top:8px">These pricing changes will apply to new bookings only. Existing bookings will keep their original prices.</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button class="btn" onclick="openPriceEdit('${k}')">Cancel</button><button class="btn primary" onclick="savePrice('${k}')">Confirm & Save</button></div></div></div>`}
+function savePrice(k){const p=PR[k],v=window.__pv;p.base=v.base;p.x=v.x;p.sup=v.sup;AL('Shekemi','Updated pricing','—',p.n);closeModal();render();toast('Pricing updated successfully')}
+let INACTIVE_ADDONS=[];
+function openAddonMgr(){$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>Manage Add-ons</h2>
+${PR.Standard.add.map((a,i)=>`<div class="sumline"><span>${a[0]} — Standard</span><span>${money(a[1])} <button class="btn" style="padding:4px 8px" onclick="editAddon(${i})">Edit</button> <button class="btn" style="padding:4px 8px" onclick="deactAddon(${i})">Deactivate</button></span></div>`).join('')}
+${INACTIVE_ADDONS.map((a,i)=>`<div class="sumline" style="opacity:.6"><span>${a[0]} — Standard (inactive)</span><span>${money(a[1])} <button class="btn" style="padding:4px 8px" onclick="reactAddon(${i})">Activate</button></span></div>`).join('')}
+<button class="btn" style="margin-top:10px" onclick="addAddonForm()">+ Add Add-on</button></div></div>`}
+function deactAddon(i){INACTIVE_ADDONS.push(PR.Standard.add[i]);PR.Standard.add.splice(i,1);openAddonMgr();toast('Add-on deactivated')}
+function reactAddon(i){PR.Standard.add.push(INACTIVE_ADDONS[i]);INACTIVE_ADDONS.splice(i,1);openAddonMgr();toast('Add-on activated')}
+function editAddon(i){const a=PR.Standard.add[i];$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Edit Add-on</h2><label class="field"><span>Name</span><input id="ean" value="${a[0]}"></label><label class="field"><span>Price</span><input id="eap" type="number" value="${a[1]}"></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openAddonMgr()">Cancel</button><button class="btn primary" onclick="saveAddon(${i})">Save Add-on</button></div></div></div>`}
+function saveAddon(i){PR.Standard.add[i]=[document.getElementById('ean').value,+document.getElementById('eap').value];openAddonMgr();toast('Add-on saved')}
+function addAddonForm(){$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>+ Add Add-on</h2><label class="field"><span>Name</span><input id="nan"></label><label class="field"><span>Price</span><input id="nap" type="number"></label><label class="field"><span>Service</span><select><option>Standard</option></select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openAddonMgr()">Cancel</button><button class="btn primary" onclick="createAddon()">Save Add-on</button></div></div></div>`}
+function createAddon(){const n=document.getElementById('nan').value,p=+document.getElementById('nap').value;if(!n||!p)return toast('Enter a name and price');PR.Standard.add.push([n,p]);openAddonMgr();toast('Add-on created')}
+
+/* ---- ZONES & AREAS ---- */
+let AREA_LIST=Object.entries(AREAS).map(([name,zone])=>({name,zone,active:true}));
+PAGES.zones=function(){$c().innerHTML=`<div class="kpis" style="grid-template-columns:repeat(4,1fr)">${[1,2,3,4].map(z=>`<div class="kpi"><div class="n">${money(ZN[z][1])}${z===4?'+':''}</div><div class="l">${ZN[z][0]}</div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn" onclick="openAreaMgr(${z})">Manage Areas</button><button class="btn" onclick="openZoneEdit(${z})">Edit</button></div></div>`).join('')}</div>
+<div class="card"><h3>All Coverage Areas</h3><p style="color:var(--muted);font-size:.85rem">${AREA_LIST.filter(a=>a.active).length} active areas across 4 zones in Ibadan.</p></div>`};
+function openZoneEdit(z){const nm=ZN[z][0].split(' — ')[1];$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>Edit Zone ${z}</h2><label class="field"><span>Zone name</span><input id="zn" value="${nm}"></label><label class="field"><span>Logistics fee</span><input id="zf" type="number" value="${ZN[z][1]}"></label><label class="field"><span>Status</span><select><option>Active</option><option>Inactive</option></select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveZone(${z})">Save Zone</button></div></div></div>`}
+function saveZone(z){ZN[z]=['Zone '+z+' — '+document.getElementById('zn').value,+document.getElementById('zf').value];AL('Shekemi','Updated zone','—','Zone '+z);closeModal();render();toast('Zone saved')}
+function openAreaMgr(z){const areas=AREA_LIST.filter(a=>a.zone===z);$h().innerHTML=`<div class="overlay center"><div class="modal" style="max-height:85vh;overflow:auto"><button class="xclose" onclick="closeModal()">✕</button><h2>${ZN[z][0]} — Areas</h2>
+${areas.map(a=>`<div class="sumline"><span>${a.name}${a.active?'':' (inactive)'}</span><span><button class="btn" style="padding:4px 8px" onclick="editArea('${a.name}')">Edit</button> <button class="btn" style="padding:4px 8px" onclick="moveAreaZone('${a.name}')">Move Zone</button> <button class="btn" style="padding:4px 8px" onclick="deactArea('${a.name}')">${a.active?'Deactivate':'Activate'}</button></span></div>`).join('')||'<p style="color:var(--muted)">No areas in this zone.</p>'}
+<button class="btn" style="margin-top:10px" onclick="addAreaForm(${z})">+ Add Area</button></div></div>`}
+function addAreaForm(z){$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>+ Add Area</h2><label class="field"><span>Area name</span><input id="ann"></label><label class="field"><span>City</span><input value="Ibadan" disabled></label><label class="field"><span>Zone</span><select id="anz">${[1,2,3,4].map(x=>`<option value="${x}" ${x===z?'selected':''}>${ZN[x][0]}</option>`).join('')}</select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openAreaMgr(${z})">Cancel</button><button class="btn primary" onclick="createArea()">Add Area</button></div></div></div>`}
+function createArea(){const n=document.getElementById('ann').value;if(!n)return toast('Enter an area name');const z=+document.getElementById('anz').value;AREA_LIST.push({name:n,zone:z,active:true});AREAS[n]=z;AL('Shekemi','Added area','—',n);openAreaMgr(z);toast('Area added successfully')}
+function editArea(n){const a=AREA_LIST.find(x=>x.name===n);$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Edit Area</h2><label class="field"><span>Area name</span><input id="ean2" value="${a.name}"></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openAreaMgr(${a.zone})">Cancel</button><button class="btn primary" onclick="saveArea('${n}')">Save</button></div></div></div>`}
+function saveArea(old){const a=AREA_LIST.find(x=>x.name===old),nn=document.getElementById('ean2').value;if(a.active){delete AREAS[old];AREAS[nn]=a.zone}a.name=nn;openAreaMgr(a.zone);toast('Area updated')}
+function moveAreaZone(n){const a=AREA_LIST.find(x=>x.name===n);$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Move ${n}?</h2><label class="field"><span>New Zone</span><select id="mvz">${[1,2,3,4].map(x=>`<option value="${x}" ${x===a.zone?'selected':''}>${ZN[x][0]}</option>`).join('')}</select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openAreaMgr(${a.zone})">Cancel</button><button class="btn primary" onclick="confirmMove('${n}')">Confirm Move</button></div></div></div>`}
+function confirmMove(n){const a=AREA_LIST.find(x=>x.name===n),z=+document.getElementById('mvz').value;a.zone=z;if(a.active)AREAS[n]=z;AL('Shekemi','Moved area zone','—',n+' → Zone '+z);openAreaMgr(z);toast('Area moved')}
+function deactArea(n){const a=AREA_LIST.find(x=>x.name===n);a.active=!a.active;if(a.active)AREAS[n]=a.zone;else delete AREAS[n];openAreaMgr(a.zone);toast(a.active?'Area activated':'Area deactivated — historical bookings unaffected')}
+
+/* ---- AVAILABILITY ---- */
+let AVAIL={},AVAIL_DATES=['Sep 25, 2026','Sep 26, 2026','Sep 27, 2026'],TIMEOFF=[{cleaner:'Musa Ibrahim',date:'Sep 27, 2026',reason:'Family event',submitted:'Sep 20, 2026'}];
+PAGES.availability=function(){$c().innerHTML=`<div class="card"><h3>Cleaner Availability</h3><table><tr><th>Cleaner</th>${AVAIL_DATES.map(d=>`<th>${d.split(',')[0]}</th>`).join('')}</tr>
+${CLEANERS.map(c=>`<tr><td>${c.name}</td>${AVAIL_DATES.map(d=>{const a=AVAIL[c.id+'_'+d],lbl=a?a.status:(c.status==='Off Today'&&d===AVAIL_DATES[0]?'Unavailable':'Available');return `<td><button class="btn" style="font-size:.75rem" onclick="openAvailEdit('${c.id}','${d}')">${lbl}</button></td>`}).join('')}</tr>`).join('')}</table></div>
+<div class="card"><h3>Pending Time-Off Requests</h3>${TIMEOFF.map((r,i)=>`<div class="attn"><div><div class="t">${r.cleaner} — ${r.date}</div><div class="s">${r.reason} · submitted ${r.submitted}</div></div><div style="display:flex;gap:6px"><button class="btn primary" onclick="toApprove(${i})">Approve</button><button class="btn" onclick="toReject(${i})">Reject</button></div></div>`).join('')||'<div class="empty">No pending requests</div>'}</div>`};
+function openAvailEdit(cid,d){const c=CLEANERS.find(x=>x.id===cid),a=AVAIL[cid+'_'+d]||{status:'Available',start:'8:00 AM',end:'6:00 PM',max:4,reason:''};
+$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>${c.name}</h2><p style="color:var(--muted);font-size:.85rem">${d}</p>
+<label class="field"><span>Status</span><select id="avs" onchange="document.getElementById('avtimes').style.display=this.value==='Available'?'':'none';document.getElementById('avreason').style.display=this.value!=='Available'?'':'none'"><option ${a.status==='Available'?'selected':''}>Available</option><option ${a.status==='Unavailable'?'selected':''}>Unavailable</option><option ${a.status==='Blocked'?'selected':''}>Blocked</option></select></label>
+<div id="avtimes" style="display:${a.status==='Available'?'':'none'}"><label class="field"><span>Start time</span><input id="avst" value="${a.start}"></label><label class="field"><span>End time</span><input id="avet" value="${a.end}"></label><label class="field"><span>Maximum bookings</span><input id="avmax" type="number" value="${a.max}"></label></div>
+<div id="avreason" style="display:${a.status!=='Available'?'':'none'}"><label class="field"><span>Reason</span><input id="avrs" value="${a.reason}"></label></div>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="saveAvail('${cid}','${d}')">Save Availability</button></div></div></div>`}
+function saveAvail(cid,d){AVAIL[cid+'_'+d]={status:document.getElementById('avs').value,start:document.getElementById('avst')?.value,end:document.getElementById('avet')?.value,max:document.getElementById('avmax')?.value,reason:document.getElementById('avrs')?.value};AL('Shekemi','Updated availability','—',cid+' '+d);closeModal();render();toast('Availability updated')}
+function toApprove(i){const r=TIMEOFF[i];AVAIL[CLEANERS.find(c=>c.name===r.cleaner).id+'_'+r.date]={status:'Blocked',reason:r.reason};TIMEOFF.splice(i,1);render();toast('Request approved — dates blocked')}
+function toReject(i){TIMEOFF.splice(i,1);render();toast('Request rejected — cleaner notified')}
+
+/* ---- CUSTOMERS / CLEANERS: add + edit ---- */
+PAGES.cleaners=function(){$c().innerHTML=`<div class="toolbar"><div></div><button class="btn primary" onclick="openAddCleaner()">+ Add Cleaner</button></div><div class="card"><table><tr><th>Name</th><th>Zone</th><th>Status</th><th>Active Jobs</th><th>Rating</th><th></th></tr>${CLEANERS.map(c=>`<tr class="row" onclick="openCleaner('${c.id}')"><td>${c.name}</td><td>${c.zone}</td><td>${c.status}</td><td>${c.jobs}</td><td>${c.rating}★</td><td><button class="btn" onclick="event.stopPropagation();openCleaner('${c.id}')">View</button></td></tr>`).join('')}</table></div>`};
+function openAddCleaner(){$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>+ Add Cleaner</h2><label class="field"><span>Full name</span><input id="acn"></label><label class="field"><span>Phone</span><input id="acp"></label><label class="field"><span>Email</span><input id="ace"></label><label class="field"><span>Status</span><select id="acs"><option>Available</option><option>Off Today</option></select></label><label class="field"><span>Zone</span><select id="acz">${[1,2,3,4].map(z=>`<option>Zone ${z}</option>`).join('')}</select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createCleaner()">Create Cleaner</button></div></div></div>`}
+function createCleaner(){const n=document.getElementById('acn').value;if(!n)return toast('Enter a name');CLEANERS.push({id:'c'+(CLEANERS.length+1),name:n,zone:document.getElementById('acz').value,status:document.getElementById('acs').value,jobs:0,rating:0,earnings:0,pending:0});AL('Shekemi','Added cleaner','—',n);closeModal();render();toast('Cleaner created')}
+function openCleaner(id){const c=CLEANERS.find(x=>x.id===id);$h().innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer"><button class="xclose" onclick="closeModal()">✕</button><h2>${c.name}</h2><p style="color:var(--muted);font-size:.85rem">${c.zone} · ${c.status}</p><div class="card" style="margin-top:14px"><div class="sumline"><span>Active Jobs</span><span>${c.jobs}</span></div><div class="sumline"><span>Rating</span><span>${c.rating}★</span></div><div class="sumline"><span>Total Earnings</span><span>${money(c.earnings)}</span></div><div class="sumline"><span>Pending Payout</span><span>${money(c.pending)}</span></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="openEditCleaner('${c.id}')">Edit Cleaner</button><button class="btn" onclick="closeModal();go('availability')">Manage Availability</button><button class="btn" onclick="openBlock('${c.id}')">Block Availability</button><button class="btn ${c.status==='Inactive'?'primary':'danger'}" onclick="toggleCleaner('${c.id}')">${c.status==='Inactive'?'Activate':'Deactivate'}</button></div></div></div>`}
+function openEditCleaner(id){const c=CLEANERS.find(x=>x.id===id);$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>Edit Cleaner</h2><label class="field"><span>Full name</span><input id="ecn" value="${c.name}"></label><label class="field"><span>Zone</span><select id="ecz">${[1,2,3,4].map(z=>`<option ${c.zone==='Zone '+z?'selected':''}>Zone ${z}</option>`).join('')}</select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openCleaner('${id}')">Cancel</button><button class="btn primary" onclick="saveCleaner('${id}')">Save Changes</button></div></div></div>`}
+function saveCleaner(id){const c=CLEANERS.find(x=>x.id===id);c.name=document.getElementById('ecn').value;c.zone=document.getElementById('ecz').value;openCleaner(id);toast('Cleaner updated')}
+
+PAGES.customers=function(){$c().innerHTML=`<div class="toolbar"><div></div><button class="btn primary" onclick="openAddCustomer()">+ Add Customer</button></div><div class="card"><table><tr><th>Name</th><th>Phone</th><th>Bookings</th><th>Total Spent</th><th></th></tr>${CUSTOMERS.map(c=>`<tr class="row" onclick="openCustomer('${c.id}')"><td>${c.name}</td><td>${c.phone}</td><td>${c.bookings}</td><td>${money(c.spent)}</td><td><button class="btn" onclick="event.stopPropagation();openCustomer('${c.id}')">View</button></td></tr>`).join('')}</table></div>`};
+function openAddCustomer(){$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>+ Add Customer</h2><label class="field"><span>Full name</span><input id="acun"></label><label class="field"><span>Phone</span><input id="acup"></label><label class="field"><span>WhatsApp</span><input id="acuw"></label><label class="field"><span>Email</span><input id="acue"></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createCustomer()">Create Customer</button></div></div></div>`}
+function createCustomer(){const n=document.getElementById('acun').value;if(!n)return toast('Enter a name');CUSTOMERS.push({id:'u'+(CUSTOMERS.length+1),name:n,phone:document.getElementById('acup').value,email:document.getElementById('acue').value,bookings:0,completed:0,cancelled:0,spent:0});AL('Shekemi','Added customer','—',n);closeModal();render();toast('Customer created')}
+function openCustomer(id){const c=CUSTOMERS.find(x=>x.id===id),hist=BOOKINGS.filter(b=>b.customer===c.name);
+$h().innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="drawer"><button class="xclose" onclick="closeModal()">✕</button><h2>${c.name}</h2><p style="color:var(--muted);font-size:.85rem">${c.phone} · ${c.email}</p>
+<div class="card" style="margin-top:14px"><div class="sumline"><span>Total Bookings</span><span>${c.bookings}</span></div><div class="sumline"><span>Completed</span><span>${c.completed}</span></div><div class="sumline"><span>Cancelled</span><span>${c.cancelled}</span></div><div class="sumline"><span>Total Spent</span><span>${money(c.spent)}</span></div></div>
+<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"><button class="btn primary" onclick="closeModal();openCreateBooking('${c.name}')">Create Booking</button><button class="btn" onclick="bookAgain('${c.id}')">Book Again</button><button class="btn" onclick="openEditCustomer('${c.id}')">Edit Customer</button></div>
+<h3 style="font-size:.9rem">Booking History</h3>${hist.map(b=>`<div class="attn" style="cursor:pointer" onclick="openBooking('${b.id}')"><div><div class="t">${b.id} · ${b.service}</div><div class="s">${b.date}</div></div>${statusPill(b.status)}</div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No bookings yet.</p>'}</div></div>`}
+function openEditCustomer(id){const c=CUSTOMERS.find(x=>x.id===id);$h().innerHTML=`<div class="overlay center"><div class="modal"><button class="xclose" onclick="closeModal()">✕</button><h2>Edit Customer</h2><label class="field"><span>Full name</span><input id="ecun" value="${c.name}"></label><label class="field"><span>Phone</span><input id="ecup" value="${c.phone}"></label><label class="field"><span>Email</span><input id="ecue" value="${c.email}"></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="openCustomer('${id}')">Cancel</button><button class="btn primary" onclick="saveCustomer('${id}')">Save Changes</button></div></div></div>`}
+function saveCustomer(id){const c=CUSTOMERS.find(x=>x.id===id);c.name=document.getElementById('ecun').value;c.phone=document.getElementById('ecup').value;c.email=document.getElementById('ecue').value;openCustomer(id);toast('Customer updated')}
+function bookAgain(id){const c=CUSTOMERS.find(x=>x.id===id);closeModal();openCreateBooking(c.name);toast('Prefilled — pricing and logistics recalculated with current rates')}
+
+/* ---- SETTINGS, ADMINS, AUDIT ---- */
+let BIZ={name:'UrbanShine',phone:'0800 000 0000',email:'hello@urbanshine.ng',hours:'8:00 AM – 6:00 PM'};
+let BOOKS={lead:'2 hours',slots:'10AM, 12PM, 2PM, 4PM',cap:'8 per day',cancel:'Free up to 4 hours before'};
+let PAYSET={deposit:'0% (full payment)',options:'Card, Bank Transfer, USSD',refund:'Full refund if cancelled 4+ hrs ahead'};
+let ADMINS=[{name:'Shekemi',email:'shekemi@urbanshine.ng',role:'Super Admin'}];
+PAGES.settings=function(){$c().innerHTML=`
+<div class="card"><h3>Business Settings</h3>${Object.entries(BIZ).map(([k,v])=>`<label class="field"><span>${k}</span><input id="biz_${k}" value="${v}"></label>`).join('')}<button class="btn primary" onclick="saveSet('BIZ')">Save Changes</button></div>
+<div class="card"><h3>Booking Settings</h3>${Object.entries(BOOKS).map(([k,v])=>`<label class="field"><span>${k}</span><input id="bks_${k}" value="${v}"></label>`).join('')}<button class="btn primary" onclick="saveSet('BOOKS')">Save Booking Settings</button></div>
+<div class="card"><h3>Payment Settings</h3>${Object.entries(PAYSET).map(([k,v])=>`<label class="field"><span>${k}</span><input id="pys_${k}" value="${v}"></label>`).join('')}<button class="btn primary" onclick="saveSet('PAYSET')">Save Payment Settings</button></div>
+<div class="card"><h3>Cleaner Payment Settings</h3><div class="warnbox">Changing these affects future payouts only. Historical payouts are preserved.</div><label class="field"><span>Cleaner percentage</span><input id="setp_pct" type="number" value="${SETP.pct}"></label><label class="field"><span>Logistics payout %</span><input id="setp_lg" type="number" value="${SETP.lgpct}"></label><button class="btn primary" onclick="saveSet('SETP')">Save Payout Settings</button></div>
+<div class="card"><h3>Admins & Permissions</h3>${ADMINS.map(a=>`<div class="sumline"><span>${a.name} — ${a.email}</span><span>${a.role}</span></div>`).join('')}<button class="btn" style="margin-top:10px" onclick="addAdminForm()">+ Add Admin</button></div>
+<div class="card"><h3>Audit Log</h3>${AUDIT.slice(0,10).map(a=>`<div class="sumline"><span>${a.a}: ${a.r}</span><span style="color:var(--muted)">${a.p} → ${a.n}</span></div>`).join('')||'<p style="color:var(--muted);font-size:.85rem">No actions recorded yet.</p>'}</div>`};
+function saveSet(which){if(which==='SETP'){SETP.pct=+document.getElementById('setp_pct').value;SETP.lgpct=+document.getElementById('setp_lg').value;AL('Shekemi','Updated payout settings','—',SETP.pct+'% / '+SETP.lgpct+'%');render();toast('Payout settings saved — applies to future payouts only');return}
+const map={BIZ:[BIZ,'biz'],BOOKS:[BOOKS,'bks'],PAYSET:[PAYSET,'pys']}[which],obj=map[0],pre=map[1];Object.keys(obj).forEach(k=>obj[k]=document.getElementById(pre+'_'+k).value);render();toast('Settings saved')}
+function addAdminForm(){$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>+ Add Admin</h2><label class="field"><span>Name</span><input id="adn"></label><label class="field"><span>Email</span><input id="ade"></label><label class="field"><span>Role</span><select id="adr"><option>Super Admin</option><option>Operations Admin</option><option>Finance Admin</option></select></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="createAdmin()">Create Admin</button></div></div></div>`}
+function createAdmin(){const n=document.getElementById('adn').value,e=document.getElementById('ade').value;if(!n||!e)return toast('Enter a name and email');ADMINS.push({name:n,email:e,role:document.getElementById('adr').value});AL('Shekemi','Added admin','—',n);closeModal();render();toast('Admin created')}
+
+/* ---- REVIEWS ---- */
+let REVIEWS=[{id:'r1',customer:'Folake Ade',booking:'US-1046',cleaner:'Blessing Okafor',rating:5,text:'Grace did a fantastic job, very thorough.',date:'Sep 24, 2026',hidden:false},{id:'r2',customer:'Ngozi Umeh',booking:'US-1045',cleaner:'Grace Eze',rating:2,text:'Arrived late and missed a room.',date:'Sep 23, 2026',hidden:false}];
+PAGES.reviews=function(){const vis=REVIEWS.filter(r=>!r.hidden);$c().innerHTML=`<div class="kpis" style="grid-template-columns:repeat(4,1fr)"><div class="kpi"><div class="n">${(vis.reduce((s,r)=>s+r.rating,0)/(vis.length||1)).toFixed(1)}★</div><div class="l">Average Rating</div></div><div class="kpi"><div class="n">${REVIEWS.length}</div><div class="l">Total Reviews</div></div><div class="kpi"><div class="n">${REVIEWS.filter(r=>r.rating===5).length}</div><div class="l">5-star</div></div><div class="kpi"><div class="n">${REVIEWS.filter(r=>r.rating===1).length}</div><div class="l">1-star</div></div></div>
+<div class="card">${REVIEWS.map(r=>`<div class="attn" style="${r.hidden?'opacity:.5':''}"><div><div class="t">${r.customer} — ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><div class="s">"${r.text}" · ${r.cleaner} · ${r.date}${r.hidden?' · Hidden':''}${r.flag?' · Flagged: '+r.flag:''}</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="openBooking('${r.booking}')">View Booking</button><button class="btn" onclick="flagRev('${r.id}')">Flag</button><button class="btn ${r.hidden?'primary':'danger'}" onclick="hideRev('${r.id}')">${r.hidden?'Unhide':'Hide'}</button></div></div>`).join('')}</div>`};
+function flagRev(id){$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Flag Review</h2><label class="field"><span>Reason</span><input id="frs" placeholder="Required"></label><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn primary" onclick="doFlag('${id}')">Flag</button></div></div></div>`}
+function doFlag(id){const r=document.getElementById('frs').value;if(!r)return toast('Enter a reason');REVIEWS.find(x=>x.id===id).flag=r;closeModal();render();toast('Review flagged')}
+function hideRev(id){const rv=REVIEWS.find(x=>x.id===id);if(rv.hidden){rv.hidden=false;render();toast('Review unhidden');return}$h().innerHTML=`<div class="overlay center"><div class="modal"><h2>Hide this review?</h2><p style="color:var(--muted);font-size:.85rem">It will be hidden from public view but not deleted.</p><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" onclick="closeModal()">Cancel</button><button class="btn danger" onclick="doHide('${id}')">Hide Review</button></div></div></div>`}
+function doHide(id){REVIEWS.find(x=>x.id===id).hidden=true;closeModal();render();toast('Review hidden')}
+
+/* ---- BOOKINGS: table/board toggle ---- */
+const STATUSES_BOARD=['Awaiting Payment','Pending Assignment','Confirmed','Cleaner En Route','Cleaning Started','Completed','Cancelled'];
+function boardHTML(list){return `<div class="kanban">${STATUSES_BOARD.map(s=>`<div class="kcol"><div style="font-weight:700;font-size:.8rem;margin-bottom:8px">${s} (${list.filter(b=>b.status===s).length})</div>${list.filter(b=>b.status===s).map(b=>`<div class="kcard" onclick="openBooking('${b.id}')"><b>${b.id}</b><br>${b.customer}<br><span style="color:var(--muted)">${b.time} · ${b.area}</span>${NEXT[b.status]?`<br><button class="btn" style="margin-top:6px;padding:4px 8px;font-size:.72rem" onclick="event.stopPropagation();adv('${b.id}')">→ ${NEXT[b.status]}</button>`:''}</div>`).join('')}</div>`).join('')}</div>`}
+PAGES.bookings=function(){const list=BOOKINGS.filter(b=>(!bFilter.status||b.status===bFilter.status)&&(!bFilter.service||b.service===bFilter.service)&&(!bFilter.date||b.date==='Sep 25, 2026'));const v=bFilter.view||'table';
+$c().innerHTML=`<div class="toolbar"><div class="filters">
+<select onchange="bFilter.status=this.value;render()"><option value="">All Statuses</option>${['Awaiting Payment','Pending Assignment','Confirmed','Cleaner En Route','Cleaning Started','Completed','Cancelled'].map(s=>`<option ${bFilter.status===s?'selected':''}>${s}</option>`).join('')}</select>
+<select onchange="bFilter.service=this.value;render()"><option value="">All Services</option>${Object.values(PR).map(p=>`<option ${bFilter.service===p.n?'selected':''}>${p.n}</option>`).join('')}</select>
+<button class="btn ${v==='table'?'primary':''}" onclick="bFilter.view='table';render()">Table</button><button class="btn ${v==='board'?'primary':''}" onclick="bFilter.view='board';render()">Board</button>
+<button class="btn" onclick="bFilter={};render()">Clear Filters</button></div><button class="btn primary" onclick="openCreateBooking()">+ Create Booking</button></div>
+${v==='board'?boardHTML(list):`<div class="card">${list.length?`<table><tr><th>Ref</th><th>Customer</th><th>Service</th><th>Date</th><th>Area</th><th>Cleaner</th><th>Amount</th><th>Status</th><th></th></tr>
+${list.map(b=>`<tr class="row"><td onclick="openBooking('${b.id}')">${b.id}</td><td onclick="openBooking('${b.id}')">${b.customer}</td><td onclick="openBooking('${b.id}')">${b.service}</td><td onclick="openBooking('${b.id}')">${b.date}</td><td onclick="openBooking('${b.id}')">${b.area}</td><td onclick="openBooking('${b.id}')">${b.cleaner||'—'}</td><td onclick="openBooking('${b.id}')">${money(b.amount)}</td><td onclick="openBooking('${b.id}')">${statusPill(b.status)}</td><td><button class="btn" onclick="event.stopPropagation();openBooking('${b.id}')">View</button></td></tr>`).join('')}</table>`:`<div class="empty"><h3>No bookings found</h3><p>Try adjusting your filters.</p><button class="btn primary" onclick="openCreateBooking()">Create Booking</button></div>`}</div>`}`};
+
+/* ---- CALENDAR views ---- */
+let calView='Day';
+PAGES.calendar=function(){const today='Sep 25, 2026',week=[['Sep 21',0],['Sep 22',0],['Sep 23',BOOKINGS.filter(b=>b.date==='Sep 23, 2026').length],['Sep 24',BOOKINGS.filter(b=>b.date==='Sep 24, 2026').length],['Sep 25',BOOKINGS.filter(b=>b.date==='Sep 25, 2026').length],['Sep 26',0],['Sep 27',0]];
+$c().innerHTML=`<div class="toolbar"><div class="filters"><button class="btn" onclick="toast('Jumped to today')">Today</button><button class="btn">‹</button><button class="btn">›</button></div><div class="filters">${['Day','Week','Month'].map(v=>`<button class="btn ${calView===v?'primary':''}" onclick="calView='${v}';render()">${v}</button>`).join('')}</div></div>
+${calView==='Day'?`<div class="card"><h3>${today}</h3>${BOOKINGS.filter(b=>b.date===today).map(b=>`<div class="attn" style="cursor:pointer" onclick="openBooking('${b.id}')"><div><div class="t">${b.time} — ${b.id}</div><div class="s">${b.customer} · ${b.area} · ${b.cleaner||'Unassigned'}</div></div>${statusPill(b.status)}</div>`).join('')||'<div class="empty">No bookings today</div>'}</div>`:
+calView==='Week'?`<div class="cal-grid">${week.map(d=>`<div class="cal-cell" onclick="calView='Day';render()"><b>${d[0]}</b><br><span style="color:var(--muted)">${d[1]} booking${d[1]===1?'':'s'}</span></div>`).join('')}</div>`:
+`<div class="card"><h3>September 2026</h3><div class="cal-grid">${Array.from({length:30},(_,i)=>i+1).map(d=>{const ds='Sep '+d+', 2026',n=BOOKINGS.filter(b=>b.date===ds).length;return `<div class="cal-cell" onclick="calView='Day';render()"><b>${d}</b>${n?`<br><span style="color:var(--jade)">${n} booking${n===1?'':'s'}</span>`:''}</div>`}).join('')}</div></div>`}`};
+
+/* ---- GLOBAL SEARCH ---- */
+function globalSearch(v){if(!v||v.length<2)return closeSearch();const q=v.toLowerCase();
+const bq=BOOKINGS.filter(b=>b.id.toLowerCase().includes(q)||b.customer.toLowerCase().includes(q));
+const cq=CUSTOMERS.filter(c=>c.name.toLowerCase().includes(q)||(c.phone||'').includes(v));
+const clq=CLEANERS.filter(c=>c.name.toLowerCase().includes(q));
+const pq=PAYOUTS.filter(p=>p.id.toLowerCase().includes(q));
+let html='';
+if(bq.length)html+=`<div class="grp">Bookings</div>`+bq.slice(0,4).map(b=>`<div class="item" onclick="closeSearch();openBooking('${b.id}')">${b.id} — ${b.customer}</div>`).join('');
+if(cq.length)html+=`<div class="grp">Customers</div>`+cq.slice(0,4).map(c=>`<div class="item" onclick="closeSearch();openCustomer('${c.id}')">${c.name} — ${c.phone}</div>`).join('');
+if(clq.length)html+=`<div class="grp">Cleaners</div>`+clq.slice(0,4).map(c=>`<div class="item" onclick="closeSearch();openCleaner('${c.id}')">${c.name}</div>`).join('');
+if(pq.length)html+=`<div class="grp">Payments</div>`+pq.slice(0,4).map(p=>`<div class="item" onclick="closeSearch();openPayout('${p.id}')">${p.id} — ${p.cleaner}</div>`).join('');
+if(!html)html='<div class="item" style="color:var(--muted)">No results</div>';
+let d=document.getElementById('searchdd');if(!d){d=document.createElement('div');d.id='searchdd';d.className='searchdd';document.body.appendChild(d)}
+d.innerHTML=html}
+function closeSearch(){const d=document.getElementById('searchdd');if(d)d.remove()}
+document.addEventListener('click',e=>{if(!e.target.closest('.hdr-r'))closeSearch()});
+render();
+
+</script>
+</body>
+</html>
